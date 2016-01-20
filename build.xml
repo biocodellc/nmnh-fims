@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="nmnh-fims" default="all">
+
+    <property name="jdk.home.1.6" value="/usr"/>
+
+    <!-- Compiler options -->
+
+    <property name="compiler.debug" value="on"/>
+    <property name="compiler.generate.no.warnings" value="off"/>
+    <property name="compiler.args" value=""/>
+    <property name="compiler.max.memory" value="128m"/>
+    <patternset id="ignored.files">
+        <exclude name="**/CVS/**"/>
+        <exclude name="**/SCCS/**"/>
+        <exclude name="**/RCS/**"/>
+        <exclude name="**/rcs/**"/>
+        <exclude name="**/.DS_Store/**"/>
+        <exclude name="**/.svn/**"/>
+        <exclude name="**/.pyc/**"/>
+        <exclude name="**/.pyo/**"/>
+        <exclude name="**/*.pyc/**"/>
+        <exclude name="**/*.pyo/**"/>
+        <exclude name="**/.git/**"/>
+        <exclude name="**/*.hprof/**"/>
+        <exclude name="**/_svn/**"/>
+        <exclude name="**/.hg/**"/>
+    </patternset>
+    <patternset id="library.patterns">
+        <include name="*.zip"/>
+        <include name="*.war"/>
+        <include name="*.egg"/>
+        <include name="*.ear"/>
+        <include name="*.swc"/>
+        <include name="*.jar"/>
+    </patternset>
+    <patternset id="compiler.resources">
+        <include name="**/?*.properties"/>
+        <include name="**/?*.xml"/>
+        <include name="**/?*.gif"/>
+        <include name="**/?*.png"/>
+        <include name="**/?*.jpeg"/>
+        <include name="**/?*.jpg"/>
+        <include name="**/?*.html"/>
+        <include name="**/?*.dtd"/>
+        <include name="**/?*.tld"/>
+        <include name="**/?*.ftl"/>
+    </patternset>
+
+    <!-- JDK definitions -->
+
+    <property name="jdk.bin.1.6" value="${jdk.home.1.6}/bin"/>
+    <path id="jdk.classpath.1.6">
+    </path>
+
+    <property name="expedition.jdk.home" value="${jdk.home.1.6}"/>
+    <property name="expedition.jdk.bin" value="${jdk.bin.1.6}"/>
+    <property name="expedition.jdk.classpath" value="jdk.classpath.1.6"/>
+
+
+    <!-- Expedition Libraries -->
+
+    <!-- BJS: instead of listing each JAR, switched this to use the "fileset" mechanism -->
+    <path id="library.lib.classpath">
+        <fileset dir="${basedir}/lib">
+            <include name="**/*.jar"/>
+        </fileset>
+    </path>
+
+    <!-- Modules -->
+    <dirname property="module.nmnh-fims.basedir" file="${ant.file}"/>
+
+
+    <property name="module.jdk.home.nmnh-fims" value="${expedition.jdk.home}"/>
+    <property name="module.jdk.bin.nmnh-fims" value="${expedition.jdk.bin}"/>
+    <property name="module.jdk.classpath.nmnh-fims" value="${expedition.jdk.classpath}"/>
+
+    <property name="compiler.args.nmnh-fims" value="${compiler.args}"/>
+
+    <property name="nmnh-fims.output.dir" value="${module.nmnh-fims.basedir}/out/production/nmnh-fims"/>
+    <property name="nmnh-fims.testoutput.dir" value="${module.nmnh-fims.basedir}/out/test/nmnh-fims"/>
+
+    <path id="nmnh-fims.module.bootclasspath">
+        <!-- Paths to be included in compilation bootclasspath -->
+    </path>
+
+    <path id="nmnh-fims.module.production.classpath">
+        <path refid="${module.jdk.classpath.nmnh-fims}"/>
+        <path refid="library.lib.classpath"/>
+    </path>
+
+    <!-- added by BJS -->
+    <path id="nmnh-fims.module.buildtests.classpath">
+        <path refid="${module.jdk.classpath.nmnh-fims}"/>
+        <pathelement location="${nmnh-fims.output.dir}"/>
+        <path refid="library.lib.classpath"/>
+    </path>
+
+    <!-- added by BJS -->
+    <path id="nmnh-fims.module.runtests.classpath">
+        <path refid="${module.jdk.classpath.nmnh-fims}"/>
+        <pathelement location="${nmnh-fims.output.dir}"/>
+        <pathelement location="${nmnh-fims.testoutput.dir}"/>
+        <path refid="library.lib.classpath"/>
+    </path>
+
+    <path id="nmnh-fims.runtime.production.module.classpath">
+        <pathelement location="${nmnh-fims.output.dir}"/>
+        <path refid="library.lib.classpath"/>
+    </path>
+
+    <path id="nmnh-fims.module.classpath">
+        <path refid="${module.jdk.classpath.nmnh-fims}"/>
+        <pathelement location="${nmnh-fims.output.dir}"/>
+        <path refid="library.lib.classpath"/>
+    </path>
+
+    <path id="nmnh-fims.runtime.module.classpath">
+        <pathelement location="${nmnh-fims.output.dir}"/>
+        <pathelement location="${nmnh-fims.testoutput.dir}"/>
+        <path refid="library.lib.classpath"/>
+    </path>
+
+
+    <patternset id="excluded.from.module.nmnh-fims">
+        <patternset refid="ignored.files"/>
+    </patternset>
+
+    <patternset id="excluded.from.compilation.nmnh-fims">
+        <patternset refid="excluded.from.module.nmnh-fims"/>
+    </patternset>
+
+    <path id="nmnh-fims.module.sourcepath">
+        <dirset dir="/">
+            <include name="src"/>
+        </dirset>
+    </path>
+
+    <target name="all" depends="build.modules" description="build all"/>
+
+    <target name="build.modules" depends="clean, war" description="build all modules"/>
+
+    <target name="clean" description="cleanup module">
+        <delete dir="${nmnh-fims.output.dir}"/>
+        <delete dir="${nmnh-fims.testoutput.dir}"/>
+    </target>
+
+    <target name="war" depends="compile.module.nmnh-fims">
+        <war destfile="dist/nmnh-fims.war" webxml="web/WEB-INF/web.xml">
+            <fileset dir="web"/>
+            <lib dir="lib" excludes="servlet-api.jar"/>
+            <classes dir="${nmnh-fims.output.dir}"/>
+            <classes dir="" includes="nmnh-fims.props"/>
+        </war>
+    </target>
+
+    <target name="compile.module.nmnh-fims" description="Compile module nmnh-fims">
+        <mkdir dir="${nmnh-fims.output.dir}"/>
+        <javac destdir="${nmnh-fims.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}"
+               srcdir="src" memorymaximumsize="${compiler.max.memory}" fork="true"
+               executable="${module.jdk.bin.nmnh-fims}/javac">
+            <compilerarg line="${compiler.args.nmnh-fims}"/>
+            <bootclasspath refid="nmnh-fims.module.bootclasspath"/>
+            <classpath refid="nmnh-fims.module.production.classpath"/>
+            <patternset refid="excluded.from.compilation.nmnh-fims"/>
+        </javac>
+
+        <copy todir="${nmnh-fims.output.dir}">
+            <fileset dir="${module.nmnh-fims.basedir}/src">
+                <patternset refid="compiler.resources"/>
+                <type type="file"/>
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="test" depends="compile.module.nmnh-fims">
+        <junit>
+            <classpath refid="nmnh-fims.module.runtests.classpath"/>
+            <formatter type="brief" usefile="false"/>
+            <batchtest>
+                <fileset dir="${nmnh-fims.testoutput.dir}" includes="**/*Test.class"/>
+            </batchtest>
+        </junit>
+    </target>
+
+</project>
