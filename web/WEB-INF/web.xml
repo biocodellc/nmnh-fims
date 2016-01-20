@@ -7,16 +7,16 @@
         <param-value>nmnh-fims.props</param-value>
     </context-param>
 
-    <!--<security-constraint>-->
-        <!--<web-resource-collection>-->
-            <!--<web-resource-name>ROOT</web-resource-name>-->
-            <!--<url-pattern>/*</url-pattern>-->
-        <!--</web-resource-collection>-->
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>ROOT</web-resource-name>
+            <url-pattern>/*</url-pattern>
+        </web-resource-collection>
 
-        <!--<user-data-constraint>-->
-            <!--<transport-guarantee>CONFIDENTIAL</transport-guarantee>-->
-        <!--</user-data-constraint>-->
-    <!--</security-constraint>-->
+        <user-data-constraint>
+            <transport-guarantee>CONFIDENTIAL</transport-guarantee>
+        </user-data-constraint>
+    </security-constraint>
 
     <session-config>
         <cookie-config>
