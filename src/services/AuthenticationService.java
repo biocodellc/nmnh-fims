@@ -39,22 +39,6 @@ public class AuthenticationService extends FimsService {
         Integer numLdapAttemptsAllowed = Integer.parseInt(sm.retrieveValue("ldapAttempts"));
         Integer ldapLockout = Integer.parseInt(sm.retrieveValue("ldapLockedAccountTimeout"));
 
-        if (usr.equalsIgnoreCase("demo") || usr.equalsIgnoreCase("biocode")) {
-            session.setAttribute("username", usr);
-            Database database = new Database();
-            session.setAttribute("userId", database.getUserId(usr));
-            database.close();
-            Authorizer myAuthorizer = new Authorizer();
-
-            // Check if the user is an admin for any projects
-            if (myAuthorizer.userProjectAdmin(usr)) {
-                session.setAttribute("projectAdmin", true);
-            }
-
-            myAuthorizer.close();
-            return Response.status(302).entity("{\"url\": \"" + appRoot + "\"}").build();
-        }
-
         if (!usr.isEmpty() && !pass.isEmpty()) {
             // ldap accounts lock after x # of attempts. We need to determine how many attempts the user currently has and inform
             // the user of a locked account
