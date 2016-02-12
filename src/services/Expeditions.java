@@ -34,7 +34,8 @@ public class Expeditions extends FimsService {
     @GET
     @Authenticated
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-    @Produces(MediaType.APPLICATION_JSON)
+    // THIS May mess things up later, jetty complaining about the APPLICATION_JSON mediatype
+    @Produces(MediaType.TEXT_HTML)
     @Path("/validate/{projectId}/{datasetCode}")
     public Response validateExpedition(@PathParam("datasetCode") String datasetCode,
                                        @PathParam("projectId") Integer projectId) {
