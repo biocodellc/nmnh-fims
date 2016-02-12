@@ -384,7 +384,7 @@ function updateCheckedBoxes() {
     if (configName == "Default") {
         populateColumns("#cat1");
     } else {
-        $.getJSON(appRoot + "rest/projects/" + $("#projects").val() + "/getTemplateConfigs/" + configName.replace("/\//g", "%2F")).done(function(data) {
+        $.getJSON(appRoot + "rest/projects/" + $("#projects").val() + "/getTemplateConfig/" + configName.replace("/\//g", "%2F")).done(function(data) {
             if (data.error != null) {
                 showMessage(data.error);
                 return;
