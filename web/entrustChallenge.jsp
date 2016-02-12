@@ -21,7 +21,7 @@
                 </tr>
                 <tr>
                     <td></td>
-                    <td><input type="hidden" name="userid" value="${param.userid}"></td>
+                    <td><input type="hidden" name="username" value="${param.username}"></td>
                 <tr>
                 <!-- TODO: get the following jstl to work
                 <c:forEach var="par" items="${paramValues}">
