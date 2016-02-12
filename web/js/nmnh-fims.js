@@ -345,7 +345,7 @@ function populateConfigs() {
         var el = $("#configs");
         el.empty();
         el.append($("<option></option>").attr("value", 0).text("Loading configs..."));
-        $.getJSON(appRoot + "rest/projects/" + projectId + "/getConfigs").done(function(data) {
+        $.getJSON(appRoot + "rest/projects/" + projectId + "/getTemplateConfigs").done(function(data) {
             var listItems = "";
 
             el.empty();
