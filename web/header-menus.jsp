@@ -51,7 +51,7 @@
 
                     <c:if test="${username != null}">
                         <li><a href="#">${username}</a></li>
-                        <li><a id="logout" href="/id/authenticationService/logout/">Logout</a></li>
+                        <li><a id="logout" href="/fims/rest/authenticationService/logout/">Logout</a></li>
                     </c:if>
 
                     <li><a href="/fims/docs/FIMS-NMNH-Help_Master.pdf" target="_blank">Help</a></li>
