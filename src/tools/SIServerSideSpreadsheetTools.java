@@ -241,14 +241,13 @@ public class SIServerSideSpreadsheetTools {
             ProcessController pc = new ProcessController();
 
             Process p = new Process(
-                    inputSpreadsheet,
                     outputDir,
                     pc,
                     configFile
             );
 
             p.runValidation();
-            Mapping map = p.getProcessController().getValidation().getMapping();
+            Mapping map = pc.getMapping();
 
             SIServerSideSpreadsheetTools tools = new SIServerSideSpreadsheetTools(
                     new File(inputSpreadsheet),

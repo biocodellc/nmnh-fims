@@ -368,7 +368,6 @@ public class Projects extends FimsService {
         processController.setAccessionNumber(accessionNumber);
 
         Process p = new Process(
-                null,
                 uploadPath(),
                 processController);
 

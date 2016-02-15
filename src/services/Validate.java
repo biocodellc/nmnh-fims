@@ -78,9 +78,10 @@ public class Validate extends FimsService {
             throw new FimsRuntimeException("Server error saving file.", 500);
         }
 
+        processController.setInputFilename(inputFile);
+
         // Create the process object --- this is done each time to orient the application
         Process p = new Process(
-                inputFile,
                 uploadPath(),
                 processController
         );
@@ -192,7 +193,6 @@ public class Validate extends FimsService {
 
         // Create the process object --- this is done each time to orient the application
         Process p = new Process(
-                processController.getInputFilename(),
                 uploadPath(),
                 processController
         );
@@ -231,13 +231,13 @@ public class Validate extends FimsService {
         // Run guidify, which adds a BCID to the spreadsheet
 
         // Get the mapping object so we can discern the column_internal fields
-        Mapping mapping = processController.getValidation().getMapping();
+        Mapping mapping = processController.getMapping();
 
         // Smithsonian specific GUID to be attached to Sheet
         SIServerSideSpreadsheetTools siServerSideSpreadsheetTools = new SIServerSideSpreadsheetTools(
                 inputFile,
                 processController.getWorksheetName(),
-                p.getMapping().getDefaultSheetUniqueKey(),
+                mapping.getDefaultSheetUniqueKey(),
                 bcidRoot);
 
         // Write GUIDs
