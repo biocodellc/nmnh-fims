@@ -607,7 +607,11 @@ function validForm() {
     if ($('#projects').val() == 0 || $("#upload").is(":checked")) {
         var message;
         var error = false;
-        if ($('#projects').val() == 0) {
+
+        if ($("#dataset").val().length < 1) {
+            message = "Please provide a dataset";
+            error = true;
+        } else if ($('#projects').val() == 0) {
             message = "Please select a project.";
             error = true;
         } else if ($("#upload").is(":checked") && ($('#expeditionCode').val() == null ||
