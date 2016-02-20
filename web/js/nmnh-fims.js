@@ -609,7 +609,7 @@ function validForm() {
         var error = false;
 
         if ($("#dataset").val().length < 1) {
-            message = "Please provide a dataset";
+            message = "Please select a spreadsheet";
             error = true;
         } else if ($('#projects').val() == 0) {
             message = "Please select a project.";
