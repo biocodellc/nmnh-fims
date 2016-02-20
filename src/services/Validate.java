@@ -110,6 +110,7 @@ public class Validate extends FimsService {
             processController.appendStatus("Validating...<br>");
 
             p.runValidation();
+            processController.printMessages();
 
             // if there were validation errors, we can't upload
             if (processController.getHasErrors()) {
