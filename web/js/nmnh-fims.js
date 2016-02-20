@@ -304,7 +304,7 @@ function saveTemplateConfig() {
             });
 
             savedConfig = configName;
-            $.post(appRoot + "rest/projects/" + $("#projects").val() + "/saveConfig", $.param(
+            $.post(appRoot + "rest/projects/" + $("#projects").val() + "/saveTemplateConfig", $.param(
                                                             {"configName": configName,
                                                             "checkedOptions": checked,
                                                             "projectId": $("#projects").val()
@@ -430,7 +430,7 @@ function removeConfig() {
             }
             var title = "Remove Template Generator Configuration";
 
-            $.getJSON(appRoot + "rest/projects/" + $("#projects").val() + "/removeConfig/" + configName.replace("/\//g", "%2F")).done(function(data) {
+            $.getJSON(appRoot + "rest/projects/" + $("#projects").val() + "/removeTemplateConfig/" + configName.replace("/\//g", "%2F")).done(function(data) {
                 if (data.error != null) {
                     showMessage(data.error);
                     return;
