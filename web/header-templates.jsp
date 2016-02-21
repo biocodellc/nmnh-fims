@@ -31,6 +31,6 @@
 
 </head>
 
-<body onload="populateProjects();">
+<body>
 
 <%@ include file="header-menus.jsp" %>
