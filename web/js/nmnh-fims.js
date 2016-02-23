@@ -797,30 +797,27 @@ function getExpeditionCodes() {
 
 // function to handle the results from the rest service /fims/rest/validate
 function validationResults(data) {
+    $("#resultsContainer").html("");
     var title = "Validation Results";
     if (data.done != null) {
-        var buttons = {
-            "Ok": function() {
-                $(this).dialog("close");
-            }
-        }
         $("#dialogContainer").dialog("close");
-        writeResults(data.done);
+        writeResults(parseResults(data.done));
     } else {
-        if (data.continue_message.message == null) {
+        if (data.continue.message == "continue") {
             continueUpload(false);
         } else {
             // ask user if want to proceed
+            var message = parseResults(data.continue);
             var buttons = {
                 "Continue": function() {
                       continueUpload(false);
                 },
                 "Cancel": function() {
-                    writeResults(data.continue_message.message);
                     $(this).dialog("close");
                 }
             }
-            dialog(data.continue_message.message, title, buttons);
+            writeResults(message);
+            dialog(message, title, buttons);
         }
     }
 }
@@ -831,7 +828,7 @@ function uploadResults(data) {
     if (data.done != null || data.error != null) {
         var message;
         if (data.done != null) {
-            message = data.done;
+            message = data.done.message;
             writeResults(message);
         } else {
             $("#dialogContainer").addClass("error");
@@ -859,19 +856,68 @@ function uploadResults(data) {
                 $(this).dialog("close");
             }
         }
-        dialog(data.continue_message, title, buttons);
+        dialog(data.continue.message, title, buttons);
     }
+}
+
+// loop through the messages
+function loopMessages(level, groupMessage, messageArray) {
+    var message = "<div id=\"expand\">";
+    message += "<dl>";
+    message += "<dt><div id='groupMessage' class='" + level + "'>" + level + ": " + groupMessage + "</div><dt>";
+    $.each(messageArray, function(key, val) {
+        message += "<dd>" + val + "</dd>";
+    })
+    message += "</dl></div>";
+    return message;
+}
+
+// parse the JSONArray of validation messages
+function parseResults(messages) {
+    var message = "";
+
+    // loop through the messages for each sheet
+    $.each(messages, function(key, val) {
+        $.each(val, function(sheetName, sheetMessages) {
+            if (sheetMessages.errors.length > 0) {
+                message += "<br>\t<b>Validation results on \"" + sheetName + "\" worksheet.</b>";
+                message += "<br><b>1 or more errors found.  Must fix to continue. Click each message for details</b><br>";
+            } else if (sheetMessages.warnings.length > 0) {
+                message += "<br>\t<b>Validation results on \"" + sheetName + "\" worksheet.</b>";
+                message += "<br><b>1 or more warnings found. Click each message for details</b><br>";
+            } else {
+                return false;
+            }
+
+            if (sheetMessages.errors.length > 0) {
+                $.each(sheetMessages.errors, function(key, val) {
+                    $.each(val, function(groupMessage, messageArray) {
+                        message += loopMessages("Error", groupMessage, messageArray);
+                    });
+                });
+            }
+            if (sheetMessages.warnings.length > 0) {
+                $.each(sheetMessages.warnings, function(key, val) {
+                    $.each(val, function(groupMessage, messageArray) {
+                        message += loopMessages("Warning", groupMessage, messageArray);
+                    });
+                });
+            }
+        });
+    });
+    return message;
 }
 
 // write results to the resultsContainer
 function writeResults(message) {
     $("#resultsContainer").show();
     // Add some nice coloring
-    message= message.replace(/Warning:/g,"<span style='color:orange;'>Warning:</span>");
-    message= message.replace(/Error:/g,"<span style='color:red;'>Error:</span>");
+    message = message.replace(/Warning:/g,"<span style='color:orange;'>Warning:</span>");
+    message = message.replace(/Error:/g,"<span style='color:red;'>Error:</span>");
     // set the project key for any project_id expressions... these come from the validator to call REST services w/ extra data
-    message= message.replace(/project_id=/g,getProjectKeyValue());
-    $("#resultsContainer").html("<table><tr><td>" + message + "</td></tr></table>");
+    message = message.replace(/project_id=/g,getProjectKeyValue());
+    $("#resultsContainer").html($("#resultsContainer").html() + message);
+//    $("#resultsContainer").html("<table><tr><td>" + message + "</td></tr></table>");
 }
 
 // function to submit the validation form using jquery form plugin to handle the file uploads

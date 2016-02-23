@@ -4,7 +4,6 @@ import biocode.fims.bcid.*;
 import biocode.fims.config.ConfigurationFileTester;
 import biocode.fims.digester.Mapping;
 import biocode.fims.fimsExceptions.FimsRuntimeException;
-import biocode.fims.fimsExceptions.UnauthorizedRequestException;
 import biocode.fims.rest.FimsService;
 import biocode.fims.rest.filters.Authenticated;
 import biocode.fims.run.Process;
@@ -110,12 +109,11 @@ public class Validate extends FimsService {
             processController.appendStatus("Validating...<br>");
 
             p.runValidation();
-            processController.printMessages();
 
             // if there were validation errors, we can't upload
             if (processController.getHasErrors()) {
                 retVal.append("{\"done\": \"");
-                retVal.append(processController.getStatusSB().toString());
+                retVal.append(processController.getMessages().toJSONString());
                 retVal.append("\"}");
 
             } else if (upload != null && upload.equals("on")) {
@@ -129,13 +127,13 @@ public class Validate extends FimsService {
 
                 // if there were vaildation warnings and user would like to upload, we need to ask the user to continue
                 if (!processController.isValidated() && processController.getHasWarnings()) {
-                    retVal.append("{\"continue_message\": {\"message\": \"");
-                    retVal.append(processController.getStatusSB().toString());
-                    retVal.append("\"}}");
+                    retVal.append("{\"continue\": ");
+                    retVal.append(processController.getMessages().toJSONString());
+                    retVal.append("}");
 
                     // there were no validation warnings and the user would like to upload, so continue
                 } else {
-                    retVal.append("{\"continue_message\": {}}");
+                    retVal.append("{\"continue\": {\"message\": \"continue\"}}");
                 }
 
                 // don't delete the inputFile because we'll need it for uploading
@@ -144,18 +142,10 @@ public class Validate extends FimsService {
                 // don't remove the controller as we will need it later for uploading this file
                 removeController = false;
 
-            } else if (processController.getHasWarnings()) {
-                // User doesn't want to upload, inform them of any validation warnings
-                retVal.append("{\"done\": \"");
-                retVal.append(processController.getStatusSB().toString());
-                retVal.append("\"}");
             } else {
-                // User doesn't want to upload and the validation passed w/o any warnings or errors
-                processController.appendStatus("<br>" + processController.getWorksheetName() +
-                        " worksheet successfully validated.");
-                retVal.append("{\"done\": \"");
-                retVal.append(processController.getStatusSB());
-                retVal.append("\"}");
+                retVal.append("{\"done\": ");
+                retVal.append(processController.getMessages().toJSONString());
+                retVal.append("}");
             }
         }
 
@@ -210,10 +200,10 @@ public class Validate extends FimsService {
         // Check to see if we need to create a new Expedition, if so we make a slight diversion
         if (processController.isExpeditionCreateRequired()) {
             // Ask the user if they want to create this expedition
-            return "{\"continue_message\": \"The dataset code \\\"" + JSONObject.escape(processController.getExpeditionCode()) +
+            return "{\"continue\": {\"message\": \"The dataset code \\\"" + JSONObject.escape(processController.getExpeditionCode()) +
                     "\\\" does not exist.  " +
                     "Do you wish to create it now?<br><br>" +
-                    "If you choose to continue, your data will be associated with this new dataset code.\"}";
+                    "If you choose to continue, your data will be associated with this new dataset code.\"}}";
         }
 
         /*
@@ -275,12 +265,12 @@ public class Validate extends FimsService {
         processController.appendStatus("<br><font color=#188B00>Successfully Uploaded!</font>");
 
         // This is the message the user sees after succesfully uploading a spreadsheet to the server
-        return "{\"done\": \"Successfully uploaded your spreadsheet to the server!<br>" +
+        return "{\"done\": {\"message\": \"Successfully uploaded your spreadsheet to the server!<br>" +
                 "dataset code = " + processController.getExpeditionCode() + "<br>" +
                 "dataset ARK = " + identifier + "<br>" +
                 "resource ARK = " + bcidRoot + "<br>" +
                 "Please maintain a local copy of your File!<br>" +
-                "Your file will be processed soon for ingestion into RCIS.\"}";
+                "Your file will be processed soon for ingestion into RCIS.\"}}";
     }
 
     /**
