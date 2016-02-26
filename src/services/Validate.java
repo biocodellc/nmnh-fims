@@ -227,9 +227,16 @@ public class Validate extends FimsService {
 
         // Mint the data group
         BcidMinter bcidMinter = new BcidMinter(ezidRequest);
-        String identifier = bcidMinter.createEntityBcid(new Bcid(processController.getUserId(), "http://purl.org/dc/dcmitype/Dataset",
-                "(accession " + processController.getAccessionNumber() + ")", "", inputFile.getName(), null,
-                processController.getFinalCopy(), false));
+        String identifier = bcidMinter.createEntityBcid(
+                new Bcid(
+                        processController.getUserId(),
+                        "http://purl.org/dc/dcmitype/Dataset",
+                        processController.getExpeditionCode() + " Dataset",
+                        "",
+                        inputFile.getName(),
+                        null,
+                        processController.getFinalCopy(),
+                        false));
         bcidMinter.close();
 
         // Associate the expeditionCode with this identifier
