@@ -374,7 +374,12 @@ public class Projects extends FimsService {
         // Handle creating an expedition on template generation
         if (operation.equalsIgnoreCase("insert")) {
             processController.setUserId(userId);
-            processController.setExpeditionTitle("(accession " + accessionNumber + ")");
+            String expedition_title =
+                    processController.getExpeditionCode() +
+                    " spreadsheet" +
+                    "(accession " + accessionNumber + ")";
+
+            processController.setExpeditionTitle(expedition_title);
             p.runExpeditionCreate();
         }
 
