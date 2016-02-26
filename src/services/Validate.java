@@ -207,13 +207,8 @@ public class Validate extends FimsService {
         }
 
         /*
-        * Copy Spreadsheet to a standard location
+         * Copy Spreadsheet to a standard location
         */
-        // Get the BCID Root
-        Resolver r = new Resolver(processController.getExpeditionCode(), processController.getProjectId(), "Resource");
-        String bcidRoot = r.getIdentifier();
-        r.close();
-
         // Set input and output files
         File inputFile = new File(processController.getInputFilename());
 
@@ -223,20 +218,6 @@ public class Validate extends FimsService {
 
         // Get the mapping object so we can discern the column_internal fields
         Mapping mapping = processController.getMapping();
-
-        // Smithsonian specific GUID to be attached to Sheet
-        SIServerSideSpreadsheetTools siServerSideSpreadsheetTools = new SIServerSideSpreadsheetTools(
-                inputFile,
-                processController.getWorksheetName(),
-                mapping.getDefaultSheetUniqueKey(),
-                bcidRoot);
-
-        // Write GUIDs
-        siServerSideSpreadsheetTools.guidify();
-
-        siServerSideSpreadsheetTools.addInternalRowToHeader(mapping, Boolean.valueOf(sm.retrieveValue("replaceHeader")));
-
-        siServerSideSpreadsheetTools.write(outputFile);
 
         // Represent the dataset by an ARK... In the Spreadsheet Uploader option this
         // gives us a way to track what spreadsheets are uploaded into the system as they can
@@ -255,6 +236,26 @@ public class Validate extends FimsService {
         ExpeditionMinter expedition = new ExpeditionMinter();
         expedition.attachReferenceToExpedition(processController.getExpeditionCode(), identifier, processController.getProjectId());
         expedition.close();
+
+
+        // Get the BCID Root
+        Resolver r = new Resolver(processController.getExpeditionCode(), processController.getProjectId(), "Resource");
+        String bcidRoot = r.getIdentifier();
+        r.close();
+        // Smithsonian specific GUID to be attached to Sheet
+        SIServerSideSpreadsheetTools siServerSideSpreadsheetTools = new SIServerSideSpreadsheetTools(
+                inputFile,
+                processController.getWorksheetName(),
+                mapping.getDefaultSheetUniqueKey(),
+                bcidRoot);
+
+        // Write GUIDs
+        siServerSideSpreadsheetTools.guidify();
+
+        siServerSideSpreadsheetTools.addInternalRowToHeader(mapping, Boolean.valueOf(sm.retrieveValue("replaceHeader")));
+
+        siServerSideSpreadsheetTools.write(outputFile);
+
 
         // delete the temporary file now that it has been uploaded
         new File(processController.getInputFilename()).delete();
