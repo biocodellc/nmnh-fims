@@ -98,9 +98,9 @@ public class Validate extends FimsService {
             processController.setValidated(false);
             processController.appendStatus(message + "<br>");
             configurationGood = false;
-            retVal.append("{\"done\": \"");
+            retVal.append("{\"done\": ");
             retVal.append(processController.getStatusSB().toString());
-            retVal.append("\"}");
+            retVal.append("}");
         }
 
 
@@ -112,9 +112,9 @@ public class Validate extends FimsService {
 
             // if there were validation errors, we can't upload
             if (processController.getHasErrors()) {
-                retVal.append("{\"done\": \"");
+                retVal.append("{\"done\": ");
                 retVal.append(processController.getMessages().toJSONString());
-                retVal.append("\"}");
+                retVal.append("}");
 
             } else if (upload != null && upload.equals("on")) {
 
