@@ -33,7 +33,7 @@
         </init-param>
         <init-param>
             <param-name>jersey.config.server.provider.packages</param-name>
-            <param-value>services;biocode.fims.rest.services</param-value>
+            <param-value>services;biocode.fims.rest.services.rest</param-value>
         </init-param>
         <init-param>
             <param-name>jersey.config.server.provider.classnames</param-name>
