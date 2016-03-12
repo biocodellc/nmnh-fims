@@ -115,8 +115,7 @@ public class AuthenticationService extends FimsService {
             if (authenticator.entrustChallenge(username, respChallenge)) {
                 // Place the user in the session
                 session.setAttribute("username", username);
-                Database database = new Database();
-                session.setAttribute("userId", database.getUserId(username));
+                session.setAttribute("userId", Database.getUserId(username));
                 Authorizer myAuthorizer = null;
 
                 myAuthorizer = new Authorizer();

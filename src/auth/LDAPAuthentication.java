@@ -1,7 +1,6 @@
 package auth;
 
 import biocode.fims.bcid.Database;
-import biocode.fims.fimsExceptions.ServerErrorException;
 import biocode.fims.settings.*;
 import com.unboundid.ldap.sdk.*;
 import com.unboundid.util.ssl.SSLUtil;
@@ -41,7 +40,6 @@ public class LDAPAuthentication {
     private String shortUsername;
     private String longUsername;
 
-    private Database db;
 
     /**
      * Load settings manager
@@ -63,7 +61,6 @@ public class LDAPAuthentication {
           return username.split("@")[0] + "@" + defaultLdapDomain;
     }
     public LDAPAuthentication() {
-        db = new Database();
     }
 
     /**
@@ -74,7 +71,7 @@ public class LDAPAuthentication {
     public Integer getLoginAttempts(String username) {
         PreparedStatement stmt = null;
         ResultSet rs = null;
-        Connection conn = db.getBcidConn();
+        Connection conn = Database.getBcidConn();
         Integer ldapTimeout = Integer.parseInt(sm.retrieveValue("ldapLockedAccountTimeout"));
 
         try {
@@ -104,7 +101,7 @@ public class LDAPAuthentication {
             // if an exception is thrown, allow the user to attempt a login anyways
             logger.warn(null, e);
         } finally {
-            db.close(conn, stmt, rs);
+            Database.close(conn, stmt, rs);
         }
         return 0;
     }
@@ -115,7 +112,7 @@ public class LDAPAuthentication {
     private void deleteExpiredNonces() {
         Integer ldapTimeout = Integer.parseInt(sm.retrieveValue("ldapLockedAccountTimeout"));
         PreparedStatement stmt = null;
-        Connection conn = db.getBcidConn();
+        Connection conn = Database.getBcidConn();
 
         try {
             String sql = "DELETE FROM ldapNonces WHERE ts < (NOW() - INTERVAL ? MINUTE) OR username = ?";
@@ -128,13 +125,13 @@ public class LDAPAuthentication {
         } catch (SQLException e) {
             logger.warn(null, e);
         } finally {
-            db.close(conn, stmt, null);
+            Database.close(conn, stmt, null);
         }
     }
 
     private void updateNonce() {
         PreparedStatement stmt = null;
-        Connection conn = db.getBcidConn();
+        Connection conn = Database.getBcidConn();
         Integer numLdapAttemptsAllowed = Integer.parseInt(sm.retrieveValue("ldapAttempts"));
 
         try {
@@ -151,7 +148,7 @@ public class LDAPAuthentication {
             // ldap login
             logger.warn(null, e);
         } finally {
-            db.close(conn, stmt, null);
+            Database.close(conn, stmt, null);
         }
 
     }
@@ -165,8 +162,6 @@ public class LDAPAuthentication {
      * @return
      */
     public LDAPAuthentication(String username, String password, Boolean recognizeDemo) {
-
-        db = new Database();
 
         // strip any domain extension that the user provided (we DON't want to store this)
         shortUsername = showShortUserName(username);
