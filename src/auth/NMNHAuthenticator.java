@@ -4,6 +4,7 @@ import biocode.fims.auth.Authenticator;
 import biocode.fims.bcid.ProjectMinter;
 import biocode.fims.fimsExceptions.ServerErrorException;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -68,7 +69,6 @@ public class NMNHAuthenticator extends Authenticator {
                 for (Integer id: projects) {
                     projectMinter.addUserToProject(userId, id);
                 }
-                projectMinter.close();
             }
             return true;
         }
@@ -84,6 +84,7 @@ public class NMNHAuthenticator extends Authenticator {
     private boolean validUser(String username) {
         PreparedStatement stmt = null;
         ResultSet rs = null;
+        Connection conn = db.getBcidConn();
         try {
             String selectString = "SELECT count(*) FROM users WHERE username = ?";
             stmt = conn.prepareStatement(selectString);
@@ -96,7 +97,7 @@ public class NMNHAuthenticator extends Authenticator {
         } catch (SQLException e) {
             throw new ServerErrorException(e);
         } finally {
-            db.close(stmt, rs);
+            db.close(conn, stmt, rs);
         }
     }
 
@@ -111,6 +112,7 @@ public class NMNHAuthenticator extends Authenticator {
         Integer userId = null;
         PreparedStatement stmt = null;
         ResultSet rs = null;
+        Connection conn = db.getBcidConn();
         try {
             String selectString = "SELECT userId FROM users WHERE username=?";
             stmt = conn.prepareStatement(selectString);
@@ -125,7 +127,7 @@ public class NMNHAuthenticator extends Authenticator {
         } catch (SQLException e) {
             throw new ServerErrorException(e);
         } finally {
-            db.close(stmt, rs);
+            db.close(conn, stmt, rs);
         }
         return userId;
     }
@@ -139,6 +141,7 @@ public class NMNHAuthenticator extends Authenticator {
      */
     public Boolean createLdapUser(String username) {
         PreparedStatement stmt = null;
+        Connection conn = db.getBcidConn();
         try {
             String insertString = "INSERT INTO users (username,hasSetPassword,institution,email,firstName,lastName,passwordResetToken,password,admin)" +
                     " VALUES(?,?,?,?,?,?,?,?,?,?)";
@@ -159,7 +162,7 @@ public class NMNHAuthenticator extends Authenticator {
         } catch (SQLException e) {
             throw new ServerErrorException(e);
         } finally {
-            db.close(stmt, null);
+            db.close(conn, stmt, null);
         }
     }
 
@@ -172,6 +175,7 @@ public class NMNHAuthenticator extends Authenticator {
         ArrayList<Integer> projects = new ArrayList<Integer>();
         PreparedStatement stmt = null;
         ResultSet rs = null;
+        Connection conn = db.getBcidConn();
 
         try {
             String sql = "SELECT projectId FROM projects";
@@ -184,7 +188,7 @@ public class NMNHAuthenticator extends Authenticator {
         } catch (SQLException e) {
             throw new ServerErrorException("Trouble getting project List", e);
         } finally {
-            db.close(stmt, rs);
+            db.close(conn, stmt, rs);
         }
     }
 }

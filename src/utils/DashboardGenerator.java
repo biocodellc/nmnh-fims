@@ -21,7 +21,6 @@ public class DashboardGenerator {
 
         ProjectMinter projectMinter = new ProjectMinter();
         JSONObject projects = (JSONObject) JSONValue.parse(projectMinter.getMyTemplatesAndDatasets(username));
-        projectMinter.close();
 
         sb.append("<h1>");
         sb.append(username);

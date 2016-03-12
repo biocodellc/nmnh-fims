@@ -388,7 +388,6 @@ public class Projects extends FimsService {
         // TODO: Resource may change in future... better to figure this out programatically at some point
         Resolver r = new Resolver(datasetCode, projectId, "Resource");
         String identifier = r.getIdentifier();
-        r.close();
 
         // Construct the new templateProcessor
         TemplateProcessor templateProcessor = new TemplateProcessor(

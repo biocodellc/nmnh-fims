@@ -237,18 +237,15 @@ public class Validate extends FimsService {
                         null,
                         processController.getFinalCopy(),
                         false));
-        bcidMinter.close();
 
         // Associate the expeditionCode with this identifier
         ExpeditionMinter expedition = new ExpeditionMinter();
         expedition.attachReferenceToExpedition(processController.getExpeditionCode(), identifier, processController.getProjectId());
-        expedition.close();
 
 
         // Get the BCID Root
         Resolver r = new Resolver(processController.getExpeditionCode(), processController.getProjectId(), "Resource");
         String bcidRoot = r.getIdentifier();
-        r.close();
         // Smithsonian specific GUID to be attached to Sheet
         SIServerSideSpreadsheetTools siServerSideSpreadsheetTools = new SIServerSideSpreadsheetTools(
                 inputFile,

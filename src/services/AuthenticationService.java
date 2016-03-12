@@ -117,7 +117,6 @@ public class AuthenticationService extends FimsService {
                 session.setAttribute("username", username);
                 Database database = new Database();
                 session.setAttribute("userId", database.getUserId(username));
-                database.close();
                 Authorizer myAuthorizer = null;
 
                 myAuthorizer = new Authorizer();
@@ -126,9 +125,6 @@ public class AuthenticationService extends FimsService {
                 if (myAuthorizer.userProjectAdmin(username)) {
                     session.setAttribute("projectAdmin", true);
                 }
-
-                myAuthorizer.close();
-                authenticator.close();
 
                 // Redirect to return_to uri if provided
                 if (returnTo != null) {
