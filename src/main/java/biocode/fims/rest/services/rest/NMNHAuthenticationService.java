@@ -5,8 +5,11 @@ import biocode.fims.auth.NMNHAuthenticator;
 import biocode.fims.auth.Authorizer;
 import biocode.fims.bcid.BcidDatabase;
 import biocode.fims.rest.FimsService;
+import biocode.fims.service.UserService;
+import biocode.fims.settings.SettingsManager;
 import biocode.fims.utils.ErrorInfo;
 import biocode.fims.utils.QueryParams;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
@@ -20,6 +23,11 @@ import java.io.IOException;
  */
 @Path("authenticationService")
 public class NMNHAuthenticationService extends FimsService {
+
+    @Autowired
+    NMNHAuthenticationService(UserService userService, SettingsManager settingsManager) {
+        super(userService, settingsManager);
+    }
 
     /**
      * Service to log a user in with 2-factor authentication using LDAP & Entrust Identity Guard
@@ -36,8 +44,8 @@ public class NMNHAuthenticationService extends FimsService {
                               @FormParam("password") String pass,
                               @Context HttpServletRequest request) {
         LDAPAuthentication ldapAuthentication = new LDAPAuthentication();
-        Integer numLdapAttemptsAllowed = Integer.parseInt(sm.retrieveValue("ldapAttempts"));
-        Integer ldapLockout = Integer.parseInt(sm.retrieveValue("ldapLockedAccountTimeout"));
+        Integer numLdapAttemptsAllowed = Integer.parseInt(settingsManager.retrieveValue("ldapAttempts"));
+        Integer ldapLockout = Integer.parseInt(settingsManager.retrieveValue("ldapLockedAccountTimeout"));
 
         if (!usr.isEmpty() && !pass.isEmpty()) {
             // ldap accounts lock after x # of attempts. We need to determine how many attempts the user currently has and inform

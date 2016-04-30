@@ -8,10 +8,13 @@ import biocode.fims.rest.FimsService;
 import biocode.fims.rest.filters.Authenticated;
 import biocode.fims.run.Process;
 import biocode.fims.run.ProcessController;
+import biocode.fims.service.UserService;
+import biocode.fims.settings.SettingsManager;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.json.simple.JSONObject;
 import biocode.fims.tools.SIServerSideSpreadsheetTools;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -22,6 +25,11 @@ import java.io.InputStream;
  */
 @Path("validate")
 public class Validate extends FimsService {
+
+    @Autowired
+    Validate(UserService userService, SettingsManager settingsManager) {
+        super(userService, settingsManager);
+    }
 
     /**
      * service to validate a dataset against a project's rules
@@ -212,7 +220,7 @@ public class Validate extends FimsService {
         // Set input and output files
         File inputFile = new File(processController.getInputFilename());
 
-        File outputFile = new File(sm.retrieveValue("serverRoot") + inputFile.getName());
+        File outputFile = new File(settingsManager.retrieveValue("serverRoot") + inputFile.getName());
 
         // Run guidify, which adds a BCID to the spreadsheet
 
@@ -223,7 +231,7 @@ public class Validate extends FimsService {
         // gives us a way to track what spreadsheets are uploaded into the system as they can
         // be tracked in the mysql database.  They also get an ARK but that is probably not useful.
 
-        boolean ezidRequest = Boolean.valueOf(sm.retrieveValue("ezidRequests"));
+        boolean ezidRequest = Boolean.valueOf(settingsManager.retrieveValue("ezidRequests"));
 
         // Mint the data group
         BcidMinter bcidMinter = new BcidMinter(ezidRequest);
@@ -256,7 +264,7 @@ public class Validate extends FimsService {
         // Write GUIDs
         siServerSideSpreadsheetTools.guidify();
 
-        siServerSideSpreadsheetTools.addInternalRowToHeader(mapping, Boolean.valueOf(sm.retrieveValue("replaceHeader")));
+        siServerSideSpreadsheetTools.addInternalRowToHeader(mapping, Boolean.valueOf(settingsManager.retrieveValue("replaceHeader")));
 
         siServerSideSpreadsheetTools.write(outputFile);
 

@@ -5,8 +5,11 @@ import biocode.fims.bcid.ProjectMinter;
 import biocode.fims.fimsExceptions.ForbiddenRequestException;
 import biocode.fims.rest.FimsService;
 import biocode.fims.rest.filters.Authenticated;
+import biocode.fims.service.UserService;
+import biocode.fims.settings.SettingsManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -20,6 +23,11 @@ import java.net.URLDecoder;
 @Path("expeditions")
 public class Expeditions extends FimsService {
     private static Logger logger = LoggerFactory.getLogger(Expeditions.class);
+
+    @Autowired
+    Expeditions(UserService userService, SettingsManager settingsManager) {
+        super(userService, settingsManager);
+    }
 
     /**
      * validateExpedition service checks the status of a new expedition code on the server and directing consuming
