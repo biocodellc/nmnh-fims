@@ -89,9 +89,9 @@ public class DashboardGenerator {
                             sb.append("<td>not available for demonstration server or demo account</td>");
                         } else {
                             sb.append("<td><a href='");
-                            sb.append("http://cdlib.org/id/" + identifier);
+                            sb.append("http://ezid.cdlib.org/id/" + identifier);
                             sb.append("'>");
-                            sb.append("http://cdlib.org/id/" + identifier);
+                            sb.append("http://ezid.cdlib.org/id/" + identifier);
                             sb.append("</a></td>");
                         }
 
