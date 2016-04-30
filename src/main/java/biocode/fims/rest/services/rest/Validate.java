@@ -3,11 +3,15 @@ package biocode.fims.rest.services.rest;
 import biocode.fims.bcid.*;
 import biocode.fims.config.ConfigurationFileTester;
 import biocode.fims.digester.Mapping;
+import biocode.fims.entities.*;
+import biocode.fims.entities.Bcid;
 import biocode.fims.fimsExceptions.FimsRuntimeException;
 import biocode.fims.rest.FimsService;
 import biocode.fims.rest.filters.Authenticated;
 import biocode.fims.run.Process;
 import biocode.fims.run.ProcessController;
+import biocode.fims.service.BcidService;
+import biocode.fims.service.ExpeditionService;
 import biocode.fims.service.UserService;
 import biocode.fims.settings.SettingsManager;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
@@ -26,9 +30,15 @@ import java.io.InputStream;
 @Path("validate")
 public class Validate extends FimsService {
 
+    private final ExpeditionService expeditionService;
+    private final BcidService bcidService;
+
     @Autowired
-    Validate(UserService userService, SettingsManager settingsManager) {
+    Validate(ExpeditionService expeditionService, BcidService bcidService,
+             UserService userService, SettingsManager settingsManager) {
         super(userService, settingsManager);
+        this.expeditionService = expeditionService;
+        this.bcidService = bcidService;
     }
 
     /**
@@ -233,33 +243,35 @@ public class Validate extends FimsService {
 
         boolean ezidRequest = Boolean.valueOf(settingsManager.retrieveValue("ezidRequests"));
 
+        // fetch the Expedition
+        Expedition expedition = expeditionService.getExpedition(
+                processController.getExpeditionCode(),
+                processController.getProjectId()
+        );
+
         // Mint the data group
-        BcidMinter bcidMinter = new BcidMinter(ezidRequest);
-        String identifier = bcidMinter.createEntityBcid(
-                new Bcid(
-                        processController.getUserId(),
-                        "http://purl.org/dc/dcmitype/Dataset",
-                        processController.getExpeditionCode() + " Dataset",
-                        "",
-                        inputFile.getName(),
-                        null,
-                        processController.getFinalCopy(),
-                        false));
+        Bcid bcid = new Bcid.BcidBuilder(user, ResourceTypes.DATASET_RESOURCE_TYPE)
+                .title(processController.getExpeditionCode() + " Dataset")
+                .finalCopy(processController.getFinalCopy())
+                .graph(inputFile.getName())
+                .ezidRequest(ezidRequest)
+                .expedition(expedition)
+                .build();
 
-        // Associate the expeditionCode with this identifier
-        ExpeditionMinter expedition = new ExpeditionMinter();
-        expedition.attachReferenceToExpedition(processController.getExpeditionCode(), identifier, processController.getProjectId());
-
+        bcidService.create(bcid);
 
         // Get the BCID Root
-        Resolver r = new Resolver(processController.getExpeditionCode(), processController.getProjectId(), "Resource");
-        String bcidRoot = r.getIdentifier();
+        Bcid rootBcid = expeditionService.getRootBcid(
+                processController.getExpeditionCode(),
+                processController.getProjectId(),
+                "Resource");
+
         // Smithsonian specific GUID to be attached to Sheet
         SIServerSideSpreadsheetTools siServerSideSpreadsheetTools = new SIServerSideSpreadsheetTools(
                 inputFile,
                 processController.getWorksheetName(),
                 mapping.getDefaultSheetUniqueKey(),
-                bcidRoot);
+                String.valueOf(rootBcid.getIdentifier()));
 
         // Write GUIDs
         siServerSideSpreadsheetTools.guidify();
@@ -280,8 +292,8 @@ public class Validate extends FimsService {
         // This is the message the user sees after succesfully uploading a spreadsheet to the server
         return "{\"done\": {\"message\": \"Successfully uploaded your spreadsheet to the server!<br>" +
                 "dataset code = " + processController.getExpeditionCode() + "<br>" +
-                "dataset ARK = " + identifier + "<br>" +
-                "resource ARK = " + bcidRoot + "<br>" +
+                "dataset ARK = " + bcid.getIdentifier() + "<br>" +
+                "resource ARK = " + rootBcid.getIdentifier()+ "<br>" +
                 "Please maintain a local copy of your File!<br>" +
                 "Your file will be processed soon for ingestion into RCIS.\"}}";
     }

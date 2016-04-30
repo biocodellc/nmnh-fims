@@ -39,10 +39,10 @@
                 <tr>
                     <td align="right">Upload&nbsp;&nbsp;</td>
                     <td style="font-size:11px;">
-                        <c:if test="${username == null}">
+                        <c:if test="${user == null}">
                             <input type="checkbox" id="upload" disabled="disabled" /> (login to upload)
                         </c:if>
-                        <c:if test="${username != null}">
+                        <c:if test="${user != null}">
                             <input type="checkbox" id="upload" name="upload" />
                         </c:if>
                     </td>

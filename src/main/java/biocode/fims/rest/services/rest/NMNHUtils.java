@@ -14,7 +14,7 @@ import javax.ws.rs.core.Response;
 /**
  * NMNH-Fims utility services
  */
-@Path("biocode/fims/utils/")
+@Path("utils/")
 public class NMNHUtils extends FimsService {
 
     @Autowired

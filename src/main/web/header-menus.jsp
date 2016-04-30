@@ -27,7 +27,7 @@
                         <a href="#" data-toggle="dropdown" class="dropdown-toggle">Tools<b class="caret"></b></a>
 
                         <ul class="dropdown-menu">
-                            <c:if test="${username != null}">
+                            <c:if test="${user != null}">
                                 <ul>
                                     <li><a href='/fims/secure/templates.jsp' class='enabled'>Generate Template</a></li>
                                     <li><a href='/fims/secure/validation.jsp' class='enabled'>Validation</a></li>
@@ -35,7 +35,7 @@
                                 </ul>
                             </c:if>
 
-                            <c:if test="${username == null}">
+                            <c:if test="${user == null}">
                                 <ul>
                                     <li><div class='disabled' style='font-size: 80%;'>Generate Template (login required)</div></li>
                                     <li><div class='disabled' style='font-size: 80%;'>Validation (login required)</div></li>
@@ -45,12 +45,12 @@
                         </ul>
                     </li>
 
-                    <c:if test="${username == null}">
+                    <c:if test="${user == null}">
                         <li><a id="login" href="login.jsp">Login</a></li>
                     </c:if>
 
-                    <c:if test="${username != null}">
-                        <li><a href="#">${username}</a></li>
+                    <c:if test="${user != null}">
+                        <li><a href="#">${user.getUsername()}</a></li>
                         <li><a id="logout" href="/fims/rest/authenticationService/logout/">Logout</a></li>
                     </c:if>
 

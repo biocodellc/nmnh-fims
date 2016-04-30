@@ -10,10 +10,10 @@
             <tr>
                 <td align=right>&nbsp;&nbsp;Choose Project&nbsp;&nbsp;</td>
                 <td align=left>
-                <c:if test="${username != null}">
+                <c:if test="${user != null}">
                     <select width=20 id=projects onChange="populateColumns('#cat1');populateAbstract('#abstract');populateConfigs();">
                 </c:if>
-                <c:if test="${username == null}">
+                <c:if test="${user == null}">
                     <select width=20 id=projects onChange="alert('You must login before generating a template');">
                 </c:if>
                         <option value=0>Loading projects ...</option>

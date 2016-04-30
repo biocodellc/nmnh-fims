@@ -4,6 +4,7 @@ import biocode.fims.auth.LDAPAuthentication;
 import biocode.fims.auth.NMNHAuthenticator;
 import biocode.fims.auth.Authorizer;
 import biocode.fims.bcid.BcidDatabase;
+import biocode.fims.entities.User;
 import biocode.fims.rest.FimsService;
 import biocode.fims.service.UserService;
 import biocode.fims.settings.SettingsManager;
@@ -24,9 +25,11 @@ import java.io.IOException;
 @Path("authenticationService")
 public class NMNHAuthenticationService extends FimsService {
 
+    private final UserService userService;
     @Autowired
     NMNHAuthenticationService(UserService userService, SettingsManager settingsManager) {
         super(userService, settingsManager);
+        this.userService = userService;
     }
 
     /**
@@ -121,9 +124,9 @@ public class NMNHAuthenticationService extends FimsService {
             // verify with the entrust IG server that the correct responses were provided to the challenge questions
             // If so, then the user is logged in
             if (authenticator.entrustChallenge(username, respChallenge)) {
+                User user = userService.getUser(username);
                 // Place the user in the session
-                session.setAttribute("username", username);
-                session.setAttribute("userId", BcidDatabase.getUserId(username));
+                session.setAttribute("user", user);
                 Authorizer myAuthorizer = null;
 
                 myAuthorizer = new Authorizer();

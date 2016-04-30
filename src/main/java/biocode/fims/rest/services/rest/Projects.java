@@ -2,11 +2,13 @@ package biocode.fims.rest.services.rest;
 
 import biocode.fims.bcid.Resolver;
 import biocode.fims.digester.*;
+import biocode.fims.entities.Bcid;
 import biocode.fims.rest.FimsService;
 import biocode.fims.rest.filters.Authenticated;
 import biocode.fims.run.ProcessController;
 import biocode.fims.run.Process;
 import biocode.fims.run.TemplateProcessor;
+import biocode.fims.service.ExpeditionService;
 import biocode.fims.service.UserService;
 import biocode.fims.settings.SettingsManager;
 import org.slf4j.Logger;
@@ -29,9 +31,13 @@ import java.util.List;
 public class Projects extends FimsService {
     private static Logger logger = LoggerFactory.getLogger(Projects.class);
 
+    private final ExpeditionService expeditionService;
+
     @Autowired
-    Projects(UserService userService, SettingsManager settingsManager) {
+    Projects(ExpeditionService expeditionService, UserService userService,
+             SettingsManager settingsManager) {
         super(userService, settingsManager);
+        this.expeditionService = expeditionService;
     }
 
     @GET
@@ -393,8 +399,8 @@ public class Projects extends FimsService {
         // Create the template processor which handles all functions related to the template, reading, generation
         // Get the ARK associated with this dataset code
         // TODO: Resource may change in future... better to figure this out programatically at some point
-        Resolver r = new Resolver(datasetCode, projectId, "Resource");
-        String identifier = r.getIdentifier();
+        Bcid rootBcid = expeditionService.getRootBcid(datasetCode, projectId, "Resource");
+        String identifier = String.valueOf(rootBcid.getIdentifier());
 
         // Construct the new templateProcessor
         TemplateProcessor templateProcessor = new TemplateProcessor(
