@@ -1,11 +1,13 @@
+*.swp
 .idea/*
 *.iml
 *.props
 *.properties
 dist/*
 build/*
+out/*
 classes/*
 javadocs/*
 javadocs/
 .gradle
-jetty-env.xml
+src/main/web/WEB-INF/web.xml
