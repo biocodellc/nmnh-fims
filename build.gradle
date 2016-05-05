@@ -26,7 +26,6 @@ repositories {
 
 dependencies {
     compile 'org.glassfish.jersey.media:jersey-media-multipart:2.22.2'
-//    compile 'org.glassfish.jersey.ext:jersey-mvc:2.22.2'
     compile 'commons-io:commons-io:2.4'
     compile 'org.apache.axis:axis-jaxrpc:1.4'
     compile 'org.apache.axis:axis:1.4'

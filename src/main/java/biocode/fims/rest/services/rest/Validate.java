@@ -213,15 +213,18 @@ public class Validate extends FimsService {
 
         if (!processController.isExpeditionAssignedToUserAndExists()) {
             p.runExpeditionCheck();
-        }
 
-        // Check to see if we need to create a new Expedition, if so we make a slight diversion
-        if (processController.isExpeditionCreateRequired()) {
-            // Ask the user if they want to create this expedition
-            return "{\"continue\": {\"message\": \"The dataset code \\\"" + JSONObject.escape(processController.getExpeditionCode()) +
-                    "\\\" does not exist.  " +
-                    "Do you wish to create it now?<br><br>" +
-                    "If you choose to continue, your data will be associated with this new dataset code.\"}}";
+            // Check to see if we need to create a new Expedition, if so we make a slight diversion
+            if (processController.isExpeditionCreateRequired()) {
+                // Ask the user if they want to create this expedition
+                return "{\"continue\": {\"message\": \"The dataset code \\\"" + JSONObject.escape(processController.getExpeditionCode()) +
+                        "\\\" does not exist.  " +
+                        "Do you wish to create it now?<br><br>" +
+                        "If you choose to continue, your data will be associated with this new dataset code.\"}}";
+            }
+
+            if (!processController.isExpeditionAssignedToUserAndExists())
+                throw new biocode.fims.fimsExceptions.BadRequestException("You do not own the expedition: " + processController.getExpeditionCode());
         }
 
         /*
