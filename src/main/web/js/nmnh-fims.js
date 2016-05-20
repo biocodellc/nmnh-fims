@@ -430,6 +430,7 @@ function removeConfig() {
                     return;
                 }
 
+                savedConfig = "Default";
                 populateConfigs();
                 dialog(data.success, title, buttons);
             }).fail(function(jqXHR) {

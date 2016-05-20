@@ -58,7 +58,7 @@ public class Expeditions extends FimsService {
         }
 
         //Check that the user exists in this project
-        if (!projectMinter.userExistsInProject(userId, projectId)) {
+        if (!projectMinter.userExistsInProject(user.getUserId(), projectId)) {
             // If the user isn't in the project, then we can't update or create a new expedition
             throw new ForbiddenRequestException("User is not authorized to update/create expeditions in this project.");
         }
@@ -74,7 +74,7 @@ public class Expeditions extends FimsService {
 
         // Else, pay attention to what user owns the initial project
         else {
-            if (expedition.userOwnsExpedition(userId, datasetCode, projectId)) {
+            if (expedition.userOwnsExpedition(user.getUserId(), datasetCode, projectId)) {
                 // If the user already owns the expedition, then great--- this is an update
                 return Response.ok("{\"update\": \"user owns this expedition\"}").build();
                 // If the expedition exists in the project but the user does not own the expedition then this means we can't

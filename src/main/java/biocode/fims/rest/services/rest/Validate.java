@@ -12,6 +12,7 @@ import biocode.fims.run.Process;
 import biocode.fims.run.ProcessController;
 import biocode.fims.service.BcidService;
 import biocode.fims.service.ExpeditionService;
+import biocode.fims.service.ProjectService;
 import biocode.fims.service.UserService;
 import biocode.fims.settings.SettingsManager;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
@@ -100,7 +101,8 @@ public class Validate extends FimsService {
         // Create the process object --- this is done each time to orient the application
         Process p = new Process(
                 uploadPath(),
-                processController
+                processController,
+                expeditionService
         );
 
         // Test the configuration file to see that we're good to go...
@@ -136,7 +138,7 @@ public class Validate extends FimsService {
 
             } else if (upload != null && upload.equals("on")) {
 
-                processController.setUserId(userId);
+                processController.setUserId(user.getUserId());
 
                 // set final copy to true in processController if user wants it on
                 if (finalCopy != null && finalCopy.equals("on")) {
@@ -203,12 +205,13 @@ public class Validate extends FimsService {
         // Create the process object --- this is done each time to orient the application
         Process p = new Process(
                 uploadPath(),
-                processController
+                processController,
+                expeditionService
         );
 
         // create this expedition if the user wants to
         if (createExpedition) {
-            p.runExpeditionCreate();
+            p.runExpeditionCreate(bcidService);
         }
 
         if (!processController.isExpeditionAssignedToUserAndExists()) {
@@ -253,15 +256,15 @@ public class Validate extends FimsService {
         );
 
         // Mint the data group
-        Bcid bcid = new Bcid.BcidBuilder(user, ResourceTypes.DATASET_RESOURCE_TYPE)
+        Bcid bcid = new Bcid.BcidBuilder(ResourceTypes.DATASET_RESOURCE_TYPE)
                 .title(processController.getExpeditionCode() + " Dataset")
                 .finalCopy(processController.getFinalCopy())
                 .graph(inputFile.getName())
                 .ezidRequest(ezidRequest)
-                .expedition(expedition)
                 .build();
 
-        bcidService.create(bcid);
+        bcidService.create(bcid, user.getUserId());
+        bcidService.attachBcidToExpedition(bcid, expedition.getExpeditionId());
 
         // Get the BCID Root
         Bcid rootBcid = expeditionService.getRootBcid(

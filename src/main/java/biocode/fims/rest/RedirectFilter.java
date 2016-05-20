@@ -1,7 +1,5 @@
 package biocode.fims.rest;
 
-import org.eclipse.jetty.http.HttpStatus;
-
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -25,7 +23,7 @@ public class RedirectFilter implements Filter {
 
         if (requestURI.matches("^/fims/rest/ark:/[0-9]{5}/.*$") || requestURI.matches("^/fims/rest/metadata/ark:/[0-9]{5}.*$")) {
             String newURI = "/fims/id/" + requestURI.substring(requestURI.lastIndexOf("rest/") + 5, requestURI.length());
-            response.setStatus(HttpStatus.MOVED_PERMANENTLY_301);
+            response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
             response.sendRedirect(newURI);
         } else {
             chain.doFilter(req, res);

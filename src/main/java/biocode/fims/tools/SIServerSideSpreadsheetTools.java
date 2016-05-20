@@ -4,7 +4,7 @@ import biocode.fims.digester.Attribute;
 import biocode.fims.digester.Mapping;
 import biocode.fims.fimsExceptions.FimsRuntimeException;
 import biocode.fims.run.ProcessController;
-import biocode.fims.run.Process;
+import org.apache.commons.digester3.Digester;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -240,14 +240,8 @@ public class SIServerSideSpreadsheetTools {
             File configFile = new File(inputConfigFile);
             ProcessController pc = new ProcessController();
 
-            Process p = new Process(
-                    outputDir,
-                    pc,
-                    configFile
-            );
-
-            p.runValidation();
-            Mapping map = pc.getMapping();
+            Mapping map = new Mapping();
+            map.addMappingRules(new Digester(), configFile);
 
             SIServerSideSpreadsheetTools tools = new SIServerSideSpreadsheetTools(
                     new File(inputSpreadsheet),

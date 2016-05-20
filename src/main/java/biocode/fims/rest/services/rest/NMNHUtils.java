@@ -28,7 +28,7 @@ public class NMNHUtils extends FimsService {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getDatasetDashboard() {
         DashboardGenerator dashboardGenerator = new DashboardGenerator();
-        String dashboard = dashboardGenerator.getNMNHDashboard(username);
+        String dashboard = dashboardGenerator.getNMNHDashboard(user.getUsername());
 
         return Response.ok("{\"dashboard\": \"" + dashboard + "\"}").build();
     }
