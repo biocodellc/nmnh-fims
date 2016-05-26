@@ -29,6 +29,7 @@ dependencies {
     compile 'commons-io:commons-io:2.4'
     compile 'org.apache.axis:axis-jaxrpc:1.4'
     compile 'org.apache.axis:axis:1.4'
+    compile group: 'commons-discovery', name: 'commons-discovery', version: '0.5'
     compile fileTree(dir: 'lib', include: ['*.jar'])
     compile project(":biocode-fims-commons")
 
