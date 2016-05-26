@@ -5,7 +5,7 @@ import biocode.fims.bcid.ProjectMinter;
 import biocode.fims.fimsExceptions.ForbiddenRequestException;
 import biocode.fims.rest.FimsService;
 import biocode.fims.rest.filters.Authenticated;
-import biocode.fims.service.UserService;
+import biocode.fims.service.OAuthProviderService;
 import biocode.fims.settings.SettingsManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,8 +25,8 @@ public class Expeditions extends FimsService {
     private static Logger logger = LoggerFactory.getLogger(Expeditions.class);
 
     @Autowired
-    Expeditions(UserService userService, SettingsManager settingsManager) {
-        super(userService, settingsManager);
+    Expeditions(OAuthProviderService providerService, SettingsManager settingsManager) {
+        super(providerService, settingsManager);
     }
 
     /**

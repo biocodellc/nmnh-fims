@@ -2,7 +2,7 @@ package biocode.fims.rest.services.rest;
 
 import biocode.fims.rest.FimsService;
 import biocode.fims.rest.filters.Authenticated;
-import biocode.fims.service.UserService;
+import biocode.fims.service.OAuthProviderService;
 import biocode.fims.settings.SettingsManager;
 import biocode.fims.utils.DashboardGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,8 +18,8 @@ import javax.ws.rs.core.Response;
 public class NMNHUtils extends FimsService {
 
     @Autowired
-    NMNHUtils(UserService userService, SettingsManager settingsManager) {
-        super(userService, settingsManager);
+    NMNHUtils(OAuthProviderService providerService, SettingsManager settingsManager) {
+        super(providerService, settingsManager);
     }
 
     @GET

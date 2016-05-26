@@ -10,10 +10,7 @@ import biocode.fims.rest.FimsService;
 import biocode.fims.rest.filters.Authenticated;
 import biocode.fims.run.Process;
 import biocode.fims.run.ProcessController;
-import biocode.fims.service.BcidService;
-import biocode.fims.service.ExpeditionService;
-import biocode.fims.service.ProjectService;
-import biocode.fims.service.UserService;
+import biocode.fims.service.*;
 import biocode.fims.settings.SettingsManager;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
@@ -36,8 +33,8 @@ public class Validate extends FimsService {
 
     @Autowired
     Validate(ExpeditionService expeditionService, BcidService bcidService,
-             UserService userService, SettingsManager settingsManager) {
-        super(userService, settingsManager);
+             OAuthProviderService providerService, SettingsManager settingsManager) {
+        super(providerService, settingsManager);
         this.expeditionService = expeditionService;
         this.bcidService = bcidService;
     }
@@ -267,7 +264,7 @@ public class Validate extends FimsService {
         bcidService.attachBcidToExpedition(bcid, expedition.getExpeditionId());
 
         // Get the BCID Root
-        Bcid rootBcid = expeditionService.getRootBcid(
+        Bcid rootBcid = expeditionService.getEntityBcid(
                 processController.getExpeditionCode(),
                 processController.getProjectId(),
                 "Resource");

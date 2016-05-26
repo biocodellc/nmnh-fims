@@ -2,10 +2,9 @@ package biocode.fims.rest.services.rest;
 
 import biocode.fims.auth.LDAPAuthentication;
 import biocode.fims.auth.NMNHAuthenticator;
-import biocode.fims.auth.Authorizer;
-import biocode.fims.bcid.BcidDatabase;
 import biocode.fims.entities.User;
 import biocode.fims.rest.FimsService;
+import biocode.fims.service.OAuthProviderService;
 import biocode.fims.service.UserService;
 import biocode.fims.settings.SettingsManager;
 import biocode.fims.utils.ErrorInfo;
@@ -27,8 +26,9 @@ public class NMNHAuthenticationService extends FimsService {
 
     private final UserService userService;
     @Autowired
-    NMNHAuthenticationService(UserService userService, SettingsManager settingsManager) {
-        super(userService, settingsManager);
+    NMNHAuthenticationService(UserService userService,
+                              OAuthProviderService providerService, SettingsManager settingsManager) {
+        super(providerService, settingsManager);
         this.userService = userService;
     }
 
@@ -127,12 +127,9 @@ public class NMNHAuthenticationService extends FimsService {
                 User user = userService.getUser(username);
                 // Place the user in the session
                 session.setAttribute("user", user);
-                Authorizer myAuthorizer = null;
-
-                myAuthorizer = new Authorizer();
 
                 // Check if the user is an admin for any projects
-                if (myAuthorizer.userProjectAdmin(username)) {
+                if (userService.isProjectAdmin(user)) {
                     session.setAttribute("projectAdmin", true);
                 }
 

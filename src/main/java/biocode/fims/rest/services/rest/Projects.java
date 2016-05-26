@@ -9,7 +9,7 @@ import biocode.fims.run.Process;
 import biocode.fims.run.TemplateProcessor;
 import biocode.fims.service.BcidService;
 import biocode.fims.service.ExpeditionService;
-import biocode.fims.service.UserService;
+import biocode.fims.service.OAuthProviderService;
 import biocode.fims.settings.SettingsManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,8 +37,8 @@ public class Projects extends FimsService {
 
     @Autowired
     Projects(ExpeditionService expeditionService, BcidService bcidService,
-             UserService userService, SettingsManager settingsManager) {
-        super(userService, settingsManager);
+             OAuthProviderService providerService, SettingsManager settingsManager) {
+        super(providerService, settingsManager);
         this.expeditionService = expeditionService;
         this.bcidService = bcidService;
     }
@@ -403,11 +403,8 @@ public class Projects extends FimsService {
         // Create the template processor which handles all functions related to the template, reading, generation
         // Get the ARK associated with this dataset code
         // TODO: Resource may change in future... better to figure this out programatically at some point
-        String identifier = null;
-        try {
-            Bcid rootBcid = expeditionService.getRootBcid(datasetCode, projectId, "Resource");
-            identifier = String.valueOf(rootBcid.getIdentifier());
-        } catch (EmptyResultDataAccessException e) {}
+        Bcid rootBcid = expeditionService.getEntityBcid(datasetCode, projectId, "Resource");
+        String identifier = String.valueOf(rootBcid.getIdentifier());
 
         // Construct the new templateProcessor
         TemplateProcessor templateProcessor = new TemplateProcessor(
