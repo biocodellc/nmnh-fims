@@ -183,6 +183,14 @@ task deployFimsTraining {
     }
 }
 
+task buildFimsTraining {
+    group = 'nmnh'
+    description = 'build and copy war to nmnh development jetty webApp directory'
+
+    dependsOn setTrainingEnv
+    dependsOn war
+}
+
 task deployFimsLocal  {
     group = 'nmnh'
     description = 'local fims deployment'
