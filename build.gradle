@@ -47,11 +47,14 @@ clean {
 // jetty ssh plugin
 remotes {
     nmnh {
-        host = 'biscicol.org' // TODO need to change this
+        host = 'nmnh-fims.si.edu' 
         user = nmnhUser
         password = nmnhPassword
-        // TODO: adding this line means stasks will fail, even though it is specified, for now, password specified above.
-        //file("${System.getProperty('user.home')}/.ssh/id_rsa")
+    }
+    nmnhdev {
+        host = 'nmnh-rcisdev2.si.edu'
+        user = nmnhDevUser
+        password = nmnhDevPassword
     }
 }
 
@@ -69,6 +72,9 @@ task setProductionEnv << {
 task setDevelopmentEnv << {
     project.ext.environment = "development"
 }
+task setTrainingEnv << {
+    project.ext.environment = "training"
+}
 task setLocalEnv << {
     project.ext.environment = "local"
 }
@@ -76,6 +82,7 @@ task setLocalEnv << {
 // if setProductionEnv or setDevelopmentEnv is run, make sure this is done before processResources
 setProductionEnv.mustRunAfter compileJava
 setDevelopmentEnv.mustRunAfter compileJava
+setTrainingEnv.mustRunAfter compileJava
 setLocalEnv.mustRunAfter compileJava
 
 /*
@@ -115,8 +122,6 @@ task copyEnvironmentResources {
 processResources.dependsOn copyEnvironmentResources
 
 task copyWebXml {
-    inputs.dir "src/main/environment/${project.environment}/web.xml"
-    outputs.dir "src/main/web/WEB-INF"
     doLast {
         project.copy {
             from "src/main/environment/${project.environment}"
@@ -139,7 +144,7 @@ task deployFims {
     doLast {
         ssh.run {
             session(remotes.nmnh) {
-                put from: war.archivePath.path, into: remoteWarDirectory + "/fims.war"
+                put from: war.archivePath.path, into: remoteWarDirectory + "fims.war"
             }
         }
     }
@@ -154,14 +159,31 @@ task deployFimsDev {
 
     doLast {
         ssh.run {
-            session(remotes.nmnh) {
-                put from: war.archivePath.path, into: remoteWarDevDirectory + "/fims.war"
+            session(remotes.nmnhdev) {
+                put from: war.archivePath.path, into: remoteWarDevDirectory + "fims.war"
+            }
+        }
+    }
+}
+
+task deployFimsTraining {
+    group = 'nmnh'
+    description = 'build and copy war to nmnh development jetty webApp directory'
+
+    dependsOn setTrainingEnv
+    dependsOn war
+
+    doLast {
+        ssh.run {
+            session(remotes.nmnhdev) {
+                put from: war.archivePath.path, into: remoteWarTrainingDirectory + "fims.war"
             }
         }
     }
 }
 
 task deployFimsLocal  {
+    group = 'nmnh'
     description = 'local fims deployment'
 
     dependsOn setLocalEnv
