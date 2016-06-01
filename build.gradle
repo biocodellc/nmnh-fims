@@ -36,7 +36,7 @@ configurations {
 
 idea {
     module {
-        scopes.PROVIDED.plus += [configurations.server]
+        scopes.COMPILE.plus += [configurations.server]
     }
 }
 
@@ -60,7 +60,9 @@ dependencies {
     server group: 'commons-discovery', name: 'commons-discovery', version: '0.5'
     server fileTree(dir: 'lib', include: ['*.jar'])
 
-    server 'org.glassfish.jersey.ext:jersey-spring3:2.22.2'
+    server('org.glassfish.jersey.ext:jersey-spring3:2.22.2') {
+        exclude module: 'bean-validator'
+    }
     server 'javax.servlet:servlet-api:2.4'
     server 'org.springframework.data:spring-data-jpa:1.10.1.RELEASE'
     server group: 'org.hibernate.javax.persistence', name: 'hibernate-jpa-2.1-api', version: '1.0.0.Final'
