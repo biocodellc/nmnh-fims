@@ -34,6 +34,9 @@ configurations {
     server
 }
 
+// this is necessary for the fatWar task subprojects.each closure to work correctly
+subprojects.each { subproject -> evaluationDependsOn( subproject.path ) }
+
 idea {
     module {
         scopes.COMPILE.plus += [configurations.server]
@@ -178,52 +181,15 @@ task copyWebXml {
 
 processResources.dependsOn copyWebXml
 
-/**
- * add all dependencies of scope "server" to the compile scope
- */
-task addDependenciesToWar << {
-    // work around from project.configurations.server as custom scopes aren't propagated to parent project
-    for (p in project.getSubprojects()) {
-        project.configurations.compile.dependencies.addAll(p.configurations.server.dependencies)
-    }
-    project.configurations.compile.dependencies.addAll(project.configurations.server.dependencies)
-}
-
-
-ext.getDependencyFiles = {
-    def subProjectJars = []
-    def dependencyFiles = []
-
-    // get a list of the sub project jars to exclude as subProjects should be built at the same time as this project.
-    for (p in project.getSubprojects()) {
-        subProjectJars.add(p.jar.archiveName)
-    }
-
-    // work around from project.configurations.server.incoming.getFiles() as custom scopes aren't propagated to parent
-    // project
-    for (p in project.getSubprojects()) {
-        for (dependency in p.configurations.server.incoming.getFiles()) {
-            if (!subProjectJars.contains(dependency.getName()) &&
-                    !dependencyFiles.contains(dependency.absoluteFile)) {
-                dependencyFiles.add(dependency.absoluteFile)
-            }
-        }
-    }
-    for (dependency in project.configurations.server.incoming.getFiles()) {
-        if (!subProjectJars.contains(dependency.getName())) {
-            dependencyFiles.add(dependency.absoluteFile)
-        }
-    }
-    return dependencyFiles
-}
-
 ext.updateRemoteDependencies = { location ->
-    def files = getDependencyFiles()
+    subprojects.each { subproject ->
+        project.configurations.server.dependencies.addAll(subproject.configurations.server.dependencies)
+    }
 
     ssh.run {
         session(remotes.biscicol) {
             execute "/bin/rm -f " + location + "*"
-            put from: files, into: location
+            put from: project.configurations.server.incoming.getFiles(), into: location
         }
     }
 }
@@ -313,20 +279,30 @@ task deployFimsTraining {
     }
 }
 
+task fatWar(type: War) {
+    archiveName = "dipnet-fims-fat.war"
+
+    subprojects.each { subproject ->
+        project.configurations.server.dependencies.addAll(subproject.configurations.server.dependencies)
+    }
+
+    classpath configurations.server
+    classpath configurations.compile
+}
+
 task deployFimsLocal  {
     group = 'nmnh'
     description = 'local fims deployment'
 
     dependsOn setLocalEnv
-    dependsOn addDependenciesToWar
-    dependsOn war
+    dependsOn fatWar
 
     doLast {
         project.copy {
-            from war.destinationDir
+            from fatWar.destinationDir
             into localWarDirectory
-            include war.archiveName
-            rename war.archiveName, "fims.war"
+            include fatWar.archiveName
+            rename fatWar.archiveName, "fims.war"
         }
     }
 }
