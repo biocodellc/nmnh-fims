@@ -146,7 +146,7 @@ function getProjectID() {
 
 // function to login user
 function login() {
-    var url = appRoot + "rest/authenticationService/loginLDAP";
+    var url = appRoot + "rest/authenticationService/login";
     var return_to = getQueryParam("return_to");
     if (return_to != null) {
         url += "?return_to=" + return_to;
@@ -906,6 +906,11 @@ function parseResults(messages) {
             }
         });
     });
+
+    if (message.length == 0) {
+        message = "<span style='color:green;'>Successfully Validated!</span>";
+    }
+    
     return message;
 }
 
