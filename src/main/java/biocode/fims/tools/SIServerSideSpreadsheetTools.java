@@ -16,10 +16,9 @@ import java.util.ArrayList;
 /**
  * Adds a BCID column at the end of a specified spreadsheet
  */
-public class SIServerSideSpreadsheetTools {
+public class SIServerSideSpreadsheetTools extends ServerSideSpreadsheetTools {
 
     private XSSFSheet sheet;
-    private XSSFWorkbook workbook;
     private String bcidRoot;
     private String localIDColumnName;
     private Integer userID;
@@ -43,14 +42,7 @@ public class SIServerSideSpreadsheetTools {
             String localIDColumnName,
             String bcidRoot) {
         // Assign class level variables
-        try {
-            FileInputStream fis = new FileInputStream(sourceFile);
-            this.workbook = new XSSFWorkbook(fis);
-        } catch (FileNotFoundException e) {
-            throw new FimsRuntimeException(500, e);
-        } catch (IOException e) {
-            throw new FimsRuntimeException(500, e);
-        }
+        super(sourceFile);
         this.sheet = workbook.getSheet(sheetName);
         this.bcidRoot = bcidRoot;
         this.localIDColumnName = localIDColumnName;
@@ -75,14 +67,7 @@ public class SIServerSideSpreadsheetTools {
             Integer userID,
             String bcidRoot) {
         // Assign class level variables
-        try {
-            FileInputStream fis = new FileInputStream(sourceFile);
-            this.workbook = new XSSFWorkbook(fis);
-        } catch (FileNotFoundException e) {
-            throw new FimsRuntimeException(500, e);
-        } catch (IOException e) {
-            throw new FimsRuntimeException(500, e);
-        }
+        super(sourceFile);
         this.sheet = workbook.getSheet(sheetName);
         this.bcidRoot = bcidRoot;
         this.userID = userID;
@@ -207,21 +192,6 @@ public class SIServerSideSpreadsheetTools {
             }
         }
         return 0;
-    }
-
-    /**
-     * Write the resulting spreadsheet
-     *
-     * @param outputFile
-     */
-    public void write(File outputFile) {
-        try {
-            FileOutputStream fileOut = new FileOutputStream(outputFile);
-            workbook.write(fileOut);
-            fileOut.close();
-        } catch (IOException e) {
-            throw new FimsRuntimeException(500, e);
-        }
     }
 
     /**
