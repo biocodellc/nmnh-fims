@@ -129,7 +129,7 @@ public class NMNHAuthenticationService extends FimsService {
                 session.setAttribute("user", user);
 
                 // Check if the user is an admin for any projects
-                if (userService.isProjectAdmin(user)) {
+                if (userService.isAProjectAdmin(user)) {
                     session.setAttribute("projectAdmin", true);
                 }
 
