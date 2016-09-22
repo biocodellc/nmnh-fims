@@ -2,13 +2,10 @@ package biocode.fims.tools;
 
 import biocode.fims.digester.Attribute;
 import biocode.fims.digester.Mapping;
-import biocode.fims.fimsExceptions.FimsRuntimeException;
 import biocode.fims.run.ProcessController;
 import org.apache.commons.digester3.Digester;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -18,7 +15,7 @@ import java.util.ArrayList;
  */
 public class SIServerSideSpreadsheetTools extends ServerSideSpreadsheetTools {
 
-    private XSSFSheet sheet;
+    private Sheet sheet;
     private String bcidRoot;
     private String localIDColumnName;
     private Integer userID;
