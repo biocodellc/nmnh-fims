@@ -144,7 +144,7 @@ public class NMNHAuthenticator {
         Connection conn = BcidDatabase.getConnection();
         try {
             String insertString = "INSERT INTO users (username,hasSetPassword,institution,email,firstName,lastName,passwordResetToken,password,admin)" +
-                    " VALUES(?,?,?,?,?,?,?,?,?,?)";
+                    " VALUES(?,?,?,?,?,?,?,?,?)";
             stmt = conn.prepareStatement(insertString);
 
             stmt.setString(1, username);
