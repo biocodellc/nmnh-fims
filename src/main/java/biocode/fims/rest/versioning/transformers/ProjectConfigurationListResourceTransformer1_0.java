@@ -1,8 +1,7 @@
-package biocode.fims.rest.transformers;
+package biocode.fims.rest.versioning.transformers;
 
 import biocode.fims.digester.Field;
 import biocode.fims.rest.versioning.Transformer;
-import biocode.fims.rest.versioning.transformers.FimsAbstractTransformer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;

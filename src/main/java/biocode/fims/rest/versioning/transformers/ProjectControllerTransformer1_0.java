@@ -1,6 +1,5 @@
-package biocode.fims.rest.transformers;
+package biocode.fims.rest.versioning.transformers;
 
-import biocode.fims.rest.versioning.transformers.FimsAbstractTransformer;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;

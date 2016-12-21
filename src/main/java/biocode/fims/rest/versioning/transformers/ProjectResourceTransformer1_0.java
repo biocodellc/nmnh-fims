@@ -1,9 +1,8 @@
-package biocode.fims.rest.transformers;
+package biocode.fims.rest.versioning.transformers;
 
 import biocode.fims.entities.Project;
 import biocode.fims.rest.SpringObjectMapper;
 import biocode.fims.rest.versioning.Transformer;
-import biocode.fims.rest.versioning.transformers.FimsAbstractTransformer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.slf4j.Logger;
