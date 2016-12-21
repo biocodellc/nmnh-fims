@@ -3,13 +3,13 @@ package biocode.fims.rest.services.rest;
 import biocode.fims.auth.LDAPAuthentication;
 import biocode.fims.auth.NMNHAuthenticator;
 import biocode.fims.entities.User;
-import biocode.fims.rest.FimsService;
 import biocode.fims.service.OAuthProviderService;
 import biocode.fims.service.UserService;
 import biocode.fims.settings.SettingsManager;
 import biocode.fims.utils.ErrorInfo;
 import biocode.fims.utils.QueryParams;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
@@ -21,15 +21,14 @@ import java.io.IOException;
 /**
  * Authentication Services
  */
+@Controller
 @Path("authenticationService")
-public class NMNHAuthenticationService extends FimsService {
+public class AuthenticationController extends FimsAbstractAuthenticationController {
 
-    private final UserService userService;
     @Autowired
-    NMNHAuthenticationService(UserService userService,
-                              OAuthProviderService providerService, SettingsManager settingsManager) {
-        super(providerService, settingsManager);
-        this.userService = userService;
+    AuthenticationController(UserService userService, OAuthProviderService providerService,
+                             SettingsManager settingsManager) {
+        super(providerService, userService, settingsManager);
     }
 
     /**

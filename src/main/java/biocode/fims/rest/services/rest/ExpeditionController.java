@@ -3,13 +3,13 @@ package biocode.fims.rest.services.rest;
 import biocode.fims.bcid.ExpeditionMinter;
 import biocode.fims.bcid.ProjectMinter;
 import biocode.fims.fimsExceptions.ForbiddenRequestException;
-import biocode.fims.rest.FimsService;
 import biocode.fims.rest.filters.Authenticated;
-import biocode.fims.service.OAuthProviderService;
+import biocode.fims.service.ExpeditionService;
 import biocode.fims.settings.SettingsManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -20,13 +20,14 @@ import java.net.URLDecoder;
 /**
  * REST services dealing with expeditions
  */
+@Controller
 @Path("expeditions")
-public class Expeditions extends FimsService {
-    private static Logger logger = LoggerFactory.getLogger(Expeditions.class);
+public class ExpeditionController extends FimsAbstractExpeditionController {
+    private static Logger logger = LoggerFactory.getLogger(ExpeditionController.class);
 
     @Autowired
-    Expeditions(OAuthProviderService providerService, SettingsManager settingsManager) {
-        super(providerService, settingsManager);
+    ExpeditionController(ExpeditionService expeditionService, SettingsManager settingsManager) {
+        super(expeditionService, settingsManager);
     }
 
     /**
@@ -58,7 +59,7 @@ public class Expeditions extends FimsService {
         }
 
         //Check that the user exists in this project
-        if (!projectMinter.userExistsInProject(user.getUserId(), projectId)) {
+        if (!projectMinter.userExistsInProject(userContext.getUser().getUserId(), projectId)) {
             // If the user isn't in the project, then we can't update or create a new expedition
             throw new ForbiddenRequestException("User is not authorized to update/create expeditions in this project.");
         }
@@ -74,7 +75,7 @@ public class Expeditions extends FimsService {
 
         // Else, pay attention to what user owns the initial project
         else {
-            if (expedition.userOwnsExpedition(user.getUserId(), datasetCode, projectId)) {
+            if (expedition.userOwnsExpedition(userContext.getUser().getUserId(), datasetCode, projectId)) {
                 // If the user already owns the expedition, then great--- this is an update
                 return Response.ok("{\"update\": \"user owns this expedition\"}").build();
                 // If the expedition exists in the project but the user does not own the expedition then this means we can't

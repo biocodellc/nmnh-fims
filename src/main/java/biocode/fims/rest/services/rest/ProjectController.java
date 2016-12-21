@@ -1,7 +1,9 @@
 package biocode.fims.rest.services.rest;
 
+import biocode.fims.config.ConfigurationFileFetcher;
 import biocode.fims.digester.*;
 import biocode.fims.entities.Bcid;
+import biocode.fims.entities.Expedition;
 import biocode.fims.rest.FimsService;
 import biocode.fims.rest.filters.Authenticated;
 import biocode.fims.run.ProcessController;
@@ -10,11 +12,12 @@ import biocode.fims.run.TemplateProcessor;
 import biocode.fims.service.BcidService;
 import biocode.fims.service.ExpeditionService;
 import biocode.fims.service.OAuthProviderService;
+import biocode.fims.service.ProjectService;
 import biocode.fims.settings.SettingsManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.stereotype.Controller;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -28,18 +31,17 @@ import java.util.List;
 /**
  * REST services dealing with projects
  */
+@Controller
 @Path("projects")
-public class Projects extends FimsService {
-    private static Logger logger = LoggerFactory.getLogger(Projects.class);
+public class ProjectController extends FimsAbstractProjectsController {
+    private static Logger logger = LoggerFactory.getLogger(ProjectController.class);
 
-    private final ExpeditionService expeditionService;
     private final BcidService bcidService;
 
     @Autowired
-    Projects(ExpeditionService expeditionService, BcidService bcidService,
-             OAuthProviderService providerService, SettingsManager settingsManager) {
-        super(providerService, settingsManager);
-        this.expeditionService = expeditionService;
+    ProjectController(ExpeditionService expeditionService, BcidService bcidService,
+                      ProjectService projectService, SettingsManager settingsManager) {
+        super(expeditionService, settingsManager, projectService);
         this.bcidService = bcidService;
     }
 
@@ -49,7 +51,7 @@ public class Projects extends FimsService {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getDefinitions(@PathParam("projectId") int projectId,
                                    @PathParam("columnName") String columnName) {
-        TemplateProcessor t = new TemplateProcessor(projectId, uploadPath(), true);
+        TemplateProcessor t = new TemplateProcessor(projectId, uploadPath());
         StringBuilder output = new StringBuilder();
 
         Iterator attributes = t.getMapping().getAllAttributes(t.getMapping().getDefaultSheetName()).iterator();
@@ -212,7 +214,7 @@ public class Projects extends FimsService {
     @Path("/{projectId}/attributes")
     @Produces(MediaType.TEXT_HTML)
     public Response getAttributes(@PathParam("projectId") int projectId) {
-        TemplateProcessor t = new TemplateProcessor(projectId, uploadPath(), true);
+        TemplateProcessor t = new TemplateProcessor(projectId, uploadPath());
         LinkedList<String> requiredColumns = t.getRequiredColumns("error");
         LinkedList<String> desiredColumns = t.getRequiredColumns("warning");
         // Use TreeMap for natural sorting of groups
@@ -380,24 +382,25 @@ public class Projects extends FimsService {
             operation = "insert";
         }
 
-        ProcessController processController = new ProcessController(projectId, datasetCode);
-        processController.setAccessionNumber(accessionNumber);
-
-        Process p = new Process(
-                uploadPath(),
-                processController,
-                expeditionService);
+        File configFile = new ConfigurationFileFetcher(projectId, uploadPath(), true).getOutputFile();
+        Mapping mapping = new Mapping();
+        mapping.addMappingRules(configFile);
 
         // Handle creating an expedition on template generation
         if (operation.equalsIgnoreCase("insert")) {
-            processController.setUserId(user.getUserId());
-            String expedition_title =
-                    processController.getExpeditionCode() +
-                    " spreadsheet" +
-                    "(accession " + accessionNumber + ")";
+            Expedition expedition = new Expedition.ExpeditionBuilder(
+                    datasetCode)
+                    .expeditionTitle(datasetCode + " spreadsheet (accession " + accessionNumber + ")")
+                    .isPublic(false)
+                    .build();
 
-            processController.setExpeditionTitle(expedition_title);
-            p.runExpeditionCreate(bcidService);
+            expeditionService.create(
+                    expedition,
+                    userContext.getUser().getUserId(),
+                    projectId,
+                    null,
+                    mapping
+            );
         }
 
         // Create the template processor which handles all functions related to the template, reading, generation
@@ -410,11 +413,10 @@ public class Projects extends FimsService {
         TemplateProcessor templateProcessor = new TemplateProcessor(
                 projectId,
                 uploadPath(),
-                true,
                 accessionNumber,
                 datasetCode,
                 identifier,
-                user.getUsername());
+                userContext.getUser().getUsername());
 
         // Set the default sheet-name
         String defaultSheetname = templateProcessor.getMapping().getDefaultSheetName();

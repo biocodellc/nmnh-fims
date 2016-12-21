@@ -829,8 +829,7 @@ function uploadResults(data) {
     if (data.done != null || data.error != null) {
         var message;
         if (data.done != null) {
-            message = data.done.message;
-            writeResults(message);
+            writeResults(data.done);
         } else {
             $("#dialogContainer").addClass("error");
             message = data.error;
@@ -866,7 +865,7 @@ function loopMessages(level, groupMessage, messageArray) {
     var message = "<div id=\"expand\">";
     message += "<dl>";
     message += "<dt><div id='groupMessage' class='" + level + "'>" + level + ": " + groupMessage + "</div><dt>";
-    $.each(messageArray, function(key, val) {
+    $.each(messageArray, function (key, val) {
         message += "<dd>" + val + "</dd>";
     })
     message += "</dl></div>";
@@ -886,32 +885,23 @@ function parseResults(messages) {
         })
     } else {
         // loop through the messages for each sheet
-        $.each(messages.worksheets, function (key, val) {
-            $.each(val, function (sheetName, sheetMessages) {
-                if (sheetMessages.errors.length > 0) {
-                    message += "<br>\t<b>Validation results on \"" + sheetName + "\" worksheet.</b>";
-                    message += "<br><b>1 or more errors found.  Must fix to continue. Click each message for details</b><br>";
-                } else if (sheetMessages.warnings.length > 0) {
-                    message += "<br>\t<b>Validation results on \"" + sheetName + "\" worksheet.</b>";
-                    message += "<br><b>1 or more warnings found. Click each message for details</b><br>";
-                } else {
-                    return false;
-                }
+        $.each(messages.worksheets, function (sheetName, sheetMessages) {
+            if (!$.isEmptyObject(sheetMessages.errors)) {
+                message += "<br>\t<b>Validation results on \"" + sheetName + "\" worksheet.</b>";
+                message += "<br><b>1 or more errors found.  Must fix to continue. Click each message for details</b><br>";
+            } else if (!$.isEmptyObject(sheetMessages.warnings)) {
+                message += "<br>\t<b>Validation results on \"" + sheetName + "\" worksheet.</b>";
+                message += "<br><b>1 or more warnings found. Click each message for details</b><br>";
+            } else {
+                return false;
+            }
 
-                if (sheetMessages.errors.length > 0) {
-                    $.each(sheetMessages.errors, function (key, val) {
-                        $.each(val, function (groupMessage, messageArray) {
-                            message += loopMessages("Error", groupMessage, messageArray);
-                        });
-                    });
-                }
-                if (sheetMessages.warnings.length > 0) {
-                    $.each(sheetMessages.warnings, function (key, val) {
-                        $.each(val, function (groupMessage, messageArray) {
-                            message += loopMessages("Warning", groupMessage, messageArray);
-                        });
-                    });
-                }
+            $.each(sheetMessages.errors, function (groupMessage, messageArray) {
+                message += loopMessages("Error", groupMessage, messageArray);
+            });
+
+            $.each(sheetMessages.warnings, function (groupMessage, messageArray) {
+                message += loopMessages("Warning", groupMessage, messageArray);
             });
         });
     }

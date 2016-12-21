@@ -205,10 +205,9 @@ public class SIServerSideSpreadsheetTools extends ServerSideSpreadsheetTools {
 
         try {
             File configFile = new File(inputConfigFile);
-            ProcessController pc = new ProcessController();
 
             Mapping map = new Mapping();
-            map.addMappingRules(new Digester(), configFile);
+            map.addMappingRules(configFile);
 
             SIServerSideSpreadsheetTools tools = new SIServerSideSpreadsheetTools(
                     new File(inputSpreadsheet),
