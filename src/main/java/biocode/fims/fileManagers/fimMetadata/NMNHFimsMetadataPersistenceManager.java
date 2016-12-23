@@ -8,9 +8,11 @@ import biocode.fims.run.ProcessController;
 import biocode.fims.service.ExpeditionService;
 import biocode.fims.settings.SettingsManager;
 import biocode.fims.tools.SIServerSideSpreadsheetTools;
+import biocode.fims.utils.FileUtils;
 import org.json.simple.JSONArray;
 
 import java.io.File;
+import java.util.UUID;
 
 /**
  * @author RJ Ewing
@@ -19,6 +21,7 @@ public class NMNHFimsMetadataPersistenceManager implements FimsMetadataPersisten
     private final SettingsManager settingsManager;
     private final ExpeditionService expeditionService;
     private ProcessController processController;
+    private String graph = null;
 
     public NMNHFimsMetadataPersistenceManager(SettingsManager settingsManager, ExpeditionService expeditionService) {
         this.settingsManager = settingsManager;
@@ -26,9 +29,11 @@ public class NMNHFimsMetadataPersistenceManager implements FimsMetadataPersisten
     }
 
     @Override
-    public void upload(ProcessController processController, JSONArray fimsMetadata) {
-        // only set the processController here. Actual "uploading" will happen in the writeSourceFile method
+    public void upload(ProcessController processController, JSONArray fimsMetadata, String filename) {
+        // only set the processController and graph here. Actual "uploading" will happen in the writeSourceFile method
         this.processController = processController;
+        String ext = FileUtils.getExtension(filename, "xls");
+        graph = UUID.randomUUID() + "." + ext;
     }
 
     @Override
@@ -38,7 +43,7 @@ public class NMNHFimsMetadataPersistenceManager implements FimsMetadataPersisten
 
     @Override
     public String writeSourceFile(File sourceFile, int bcidId) {
-        File outputFile = new File(settingsManager.retrieveValue("serverRoot") + sourceFile.getName());
+        File outputFile = new File(settingsManager.retrieveValue("serverRoot") + graph);
 
         // Get the BCID Root
         Entity rootEntity = processController.getMapping().getRootEntity();
@@ -68,7 +73,8 @@ public class NMNHFimsMetadataPersistenceManager implements FimsMetadataPersisten
 
         siServerSideSpreadsheetTools.write(outputFile);
 
-        return outputFile.getName();
+        // We don't want to actually store the sourceUrl for nmnh since the files are post processed and deleted
+        return null;
     }
 
     @Override
@@ -78,7 +84,7 @@ public class NMNHFimsMetadataPersistenceManager implements FimsMetadataPersisten
 
     @Override
     public String getGraph() {
-        return null;
+        return graph;
     }
 
     @Override
