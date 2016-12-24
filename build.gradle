@@ -188,7 +188,7 @@ ext.updateRemoteDependencies = { location ->
     }
 
     ssh.run {
-        session(remotes.biscicol) {
+        session(remotes.nmnh) {
             execute "/bin/rm -f " + location + "*"
             put from: project.configurations.server.incoming.getFiles(), into: location
         }
@@ -233,7 +233,7 @@ ext.remoteDeploy = { workingDir, remoteLibsDir, remoteWarDir, remoteConn ->
             // Need to execute zip command from the working Directory in order to get relative paths correct
             execute "cd " + workingDir + ";/usr/bin/zip -r " + remoteWarDir + "fims.war " + " ."
             // Cleanup
-            execute "/bin/rm -rf " + workingDir
+            //execute "/bin/rm -rf " + workingDir
             execute "/bin/rm /tmp/fims.deployed.war.backup"
         }
     }
