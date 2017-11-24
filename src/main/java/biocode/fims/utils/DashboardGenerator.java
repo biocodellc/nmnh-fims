@@ -32,7 +32,7 @@ public class DashboardGenerator {
             sb.append("<br>\\n<a class='expand-content' id='");
             sb.append("project" + projectCounter);
             sb.append("' href='javascript:void(0);'>\\n");
-            sb.append("\\t <img src='/fims/images/right-arrow.png' id='arrow' class='img-arrow'>");
+            sb.append("\\t <img src='/images/right-arrow.png' id='arrow' class='img-arrow'>");
             sb.append(projectTitle);
             sb.append("</a>\\n");
             sb.append("<div class='toggle-content' id='");
@@ -46,7 +46,7 @@ public class DashboardGenerator {
                 sb.append("<br>\\n<a class='expand-content' id='");
                 sb.append("dataset" + datasetCounter);
                 sb.append("' href='javascript:void(0);'>\\n");
-                sb.append("\\t <img src='/fims/images/right-arrow.png' id='arrow' class='img-arrow'>");
+                sb.append("\\t <img src='/images/right-arrow.png' id='arrow' class='img-arrow'>");
                 sb.append(expeditionTitle);
                 sb.append("</a>\\n");
                 sb.append("<div class='toggle-content' id='");

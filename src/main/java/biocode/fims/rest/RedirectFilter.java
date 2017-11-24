@@ -21,8 +21,8 @@ public class RedirectFilter implements Filter {
         HttpServletResponse response = (HttpServletResponse) res;
         String requestURI = request.getRequestURI();
 
-        if (requestURI.matches("^/fims/rest/ark:/[0-9]{5}/.*$") || requestURI.matches("^/fims/rest/metadata/ark:/[0-9]{5}.*$")) {
-            String newURI = "/fims/id/" + requestURI.substring(requestURI.lastIndexOf("rest/") + 5, requestURI.length());
+        if (requestURI.matches("^/rest/ark:/[0-9]{5}/.*$") || requestURI.matches("^/rest/metadata/ark:/[0-9]{5}.*$")) {
+            String newURI = "/id/" + requestURI.substring(requestURI.lastIndexOf("rest/") + 5, requestURI.length());
             response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
             response.sendRedirect(newURI);
         } else {

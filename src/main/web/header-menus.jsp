@@ -9,7 +9,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="/fims/index.jsp">NMNH Field Information Management System (FIMS)
+                <a class="navbar-brand" href="/index.jsp">NMNH Field Information Management System (FIMS)
 		<% if (request.getLocalAddr().equals("160.111.247.228")) { %>
 			<% if (request.getLocalPort() == 8179) { %>
  				- <b>DEVELOPMENT ENVIRONMENT</b>
@@ -29,9 +29,9 @@
                         <ul class="dropdown-menu">
                             <c:if test="${user != null}">
                                 <ul>
-                                    <li><a href='/fims/secure/templates.jsp' class='enabled'>Generate Template</a></li>
-                                    <li><a href='/fims/secure/validation.jsp' class='enabled'>Validation</a></li>
-                                    <li><a href='/fims/secure/datasets.jsp' class='enabled'>My Templates and Datasets</a></li>
+                                    <li><a href='/secure/templates.jsp' class='enabled'>Generate Template</a></li>
+                                    <li><a href='/secure/validation.jsp' class='enabled'>Validation</a></li>
+                                    <li><a href='/secure/datasets.jsp' class='enabled'>My Templates and Datasets</a></li>
                                 </ul>
                             </c:if>
 
@@ -51,10 +51,10 @@
 
                     <c:if test="${user != null}">
                         <li><a href="#">${user.getUsername()}</a></li>
-                        <li><a id="logout" href="/fims/rest/authenticationService/logout/">Logout</a></li>
+                        <li><a id="logout" href="/rest/authenticationService/logout/">Logout</a></li>
                     </c:if>
 
-                    <li><a href="/fims/docs/FIMS-NMNH-Help_Master.pdf" target="_blank">Help</a></li>
+                    <li><a href="/docs/FIMS-NMNH-Help_Master.pdf" target="_blank">Help</a></li>
                 </ul>
             </div><!-- /.navbar-collapse -->
         </div>

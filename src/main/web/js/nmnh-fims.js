@@ -1,5 +1,5 @@
 /* ====== General Utility Functions ======= */
-var appRoot = "/fims/";
+var appRoot = "/";
 var sessionTimeout;
 
 (function(undefined) {
@@ -796,7 +796,7 @@ function getExpeditionCodes() {
         });
 }
 
-// function to handle the results from the rest service /fims/rest/validate
+// function to handle the results from the rest service /rest/validate
 function validationResults(data) {
     $("#resultsContainer").html("");
     var title = "Validation Results";
@@ -823,7 +823,7 @@ function validationResults(data) {
     }
 }
 
-// function to handle the results from the rest service /fims/rest/validate/continue
+// function to handle the results from the rest service /rest/validate/continue
 function uploadResults(data) {
     var title = "Upload Results";
     if (data.done != null || data.error != null) {

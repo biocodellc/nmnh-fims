@@ -13,21 +13,21 @@
     <head>
     <title>NMNH FIMS Template Generator</title>
 
-    <link rel="stylesheet" type="text/css" href="/fims/css/jquery-ui.css" />
-    <link rel="stylesheet" type="text/css" href="/fims/css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="/fims/css/alerts.css"/>
-    <link rel="stylesheet" type="text/css" href="/fims/css/biscicol.css"/>
+    <link rel="stylesheet" type="text/css" href="/css/jquery-ui.css" />
+    <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/alerts.css"/>
+    <link rel="stylesheet" type="text/css" href="/css/biscicol.css"/>
 
     <script>var sessionMaxInactiveInterval = ${pageContext.session.maxInactiveInterval}</script>
-    <script type="text/javascript" src="/fims/js/jquery.js"></script>
-    <script type="text/javascript" src="/fims/js/jquery-ui.min.js"></script>
-    <script type="text/javascript" src="/fims/js/jquery.form.js"></script>
-    <script type="text/javascript" src="/fims/js/BrowserDetect.js"></script>
+    <script type="text/javascript" src="/js/jquery.js"></script>
+    <script type="text/javascript" src="/js/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="/js/jquery.form.js"></script>
+    <script type="text/javascript" src="/js/BrowserDetect.js"></script>
 
-    <script type="text/javascript" src="/fims/js/nmnh-fims.js"></script>
-    <script type="text/javascript" src="/fims/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/js/nmnh-fims.js"></script>
+    <script type="text/javascript" src="/js/bootstrap.min.js"></script>
 
-    <link rel="short icon" href="/fims/docs/images/fimsicon.png" />
+    <link rel="short icon" href="/docs/images/fimsicon.png" />
 
 </head>
 
