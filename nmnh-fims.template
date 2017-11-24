@@ -27,13 +27,13 @@ replaceHeader = false
 ###########  biocode-fims-commons settings  ##########
 
 # the login page to redirect to when a user needs to login
-loginPageUrl = http://biscicol.org/fims/login.jsp
+loginPageUrl = http://biscicol.org/login.jsp
 
 # the webapp directory to use for caching config file, and storing templates for download
 uploadDir = tripleOutput
 
 # the url where the webapp is deployed
-appRoot = http://biscicol.org/fims
+appRoot = http://biscicol.org/
 
 # the naan to use for the bcid identifier
 naan = 21547
@@ -71,6 +71,6 @@ divider = _
 rights = http://creativecommons.org/licenses/by/3.0/
 
 # The bcid resolver service
-resolverTargetPrefix = http://biscicol.org/fims/rest/
+resolverTargetPrefix = http://biscicol.org/rest/
 # The bcid metadata service
-resolverMetadataPrefix = http://biscicol.org/fims/rest/metadata/
+resolverMetadataPrefix = http://biscicol.org/rest/metadata/
