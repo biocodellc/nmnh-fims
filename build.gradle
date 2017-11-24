@@ -108,11 +108,11 @@ remotes {
 }
 
 allprojects {
-    task verifyMasterBranch << {
-        ext.repo = Grgit.open(project.file('.'))
-        if (ext.repo.branch.current.name != "master")
-            throw new GradleScriptException(project.name + ' is not on the master branch', null)
-    }
+    //task verifyMasterBranch << {
+     //   ext.repo = Grgit.open(project.file('.'))
+      //  if (ext.repo.branch.current.name != "master")
+    //#        throw new GradleScriptException(project.name + ' is not on the master branch', null)
+   // }
 }
 
 task setProductionEnv << {
@@ -208,7 +208,7 @@ task updateDependencies {
     group = "biscicol.org"
     description = "update the jars located in " + remoteLibsDirectory
 
-    dependsOn verifyMasterBranch
+    //dependsOn verifyMasterBranch
 
     doLast {
         updateRemoteDependencies(remoteLibsDirectory)
@@ -243,7 +243,7 @@ task deployFims {
     group = 'nmnh'
     description = 'verify that all subprojects are on the master branch. Then build and copy war to nmnh production jetty webApp directory'
 
-    dependsOn verifyMasterBranch
+    //dependsOn verifyMasterBranch
     dependsOn setProductionEnv
     dependsOn war
 
